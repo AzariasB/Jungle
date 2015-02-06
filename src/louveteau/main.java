@@ -1,26 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
 package louveteau;
 
-import org.jsfml.audio.Music;
-import org.jsfml.graphics.RenderWindow;
+import graphics.GraphicEngine;
 
-/**
- *
- * @author Azarias
- */
+
 public class main {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        /*
+        TODO  : Create the game
+        */
         
-        RenderWindow mafenetre;
-        Music mamusique;
+        GraphicEngine myGEngine = new GraphicEngine(800, 600, "Coucou", false);
     }
-    
+
 }
