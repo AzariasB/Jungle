@@ -43,6 +43,9 @@ Temporary Items
 .apdisk
 /Louveteau/nbproject/private/
 *.html
-lib/
+/lib/
 manifest.mf
-nbproject/
+/nbproject/
+/build/
+/dist/
+
