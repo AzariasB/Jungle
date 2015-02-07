@@ -26,12 +26,13 @@ public class GameState extends AbstractApplicationState {
 
     public GameState(int id) {
         super(id);
-        MusicEngine mesMusiques = new MusicEngine();
-        gameMusic = mesMusiques.getMusic("happy.ogg");
     }
+
 
     @Override
     public void notifyEntering() {
+        MusicEngine mesMusiques = getApplication().getMusicEngine();
+        gameMusic = mesMusiques.getMusic("happy.ogg");
         //gameMusic.play();
     }
 

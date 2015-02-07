@@ -10,7 +10,6 @@ import com.artemis.systems.VoidEntitySystem;
 import com.artemis.utils.ImmutableBag;
 import components.Position;
 import org.jsfml.system.Vector2f;
-import sounds.MusicEngine;
 
 /**
  *
@@ -49,9 +48,7 @@ public class CollectSystem extends VoidEntitySystem {
 
                         if (dv.x * dv.x + dv.y * dv.y < 500) {
                             collectable.deleteFromWorld();
-                            //mApplication.getMusicEngine().get
-                            MusicEngine mesMusiques = new MusicEngine();
-                            mesMusiques.getMusic("happy.ogg").play();
+                            mApplication.getMusicEngine().getMusic("happy.ogg").play();
 
                         }
                     }

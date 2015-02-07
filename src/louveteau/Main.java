@@ -29,7 +29,7 @@ public class Main {
         app.addState(new SplashScreenState(SPLASHSCREENSTATE));
         app.addState(new MainMenuState(MAINMENUSTATE));
         app.addState(new GameState(GAMESTATE));
-        app.goToState(GAMESTATE);
+        app.setStartingState(GAMESTATE);
 
         app.run();
     }
