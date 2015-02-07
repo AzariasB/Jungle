@@ -108,7 +108,7 @@ public final class Application {
     private final StateManager mStates;
 
     private Vector2i mWindowSize;
-    private String mWindowName;
+    private final String mWindowName;
     private boolean mWindowFullscreen;
     private GraphicEngine mGraphicEngine;
     //private SoundEngine mSoundEngine;

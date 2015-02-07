@@ -6,8 +6,7 @@
 package louveteau;
 
 import architecture.Application;
-import org.jsfml.audio.Music;
-import sounds.MusicEngine;
+import map.Map;
 import states.GameState;
 import states.MainMenuState;
 import states.SplashScreenState;
@@ -25,6 +24,8 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+       // Map macarte = new Map("map.txt");
+        
         Application app = new Application("Louveteau");
         app.setDisplayMode(800, 600, false);
 

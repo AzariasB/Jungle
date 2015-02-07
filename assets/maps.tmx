@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="16" tileheight="16" nextobjectid="18">
+ <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16">
+  <image source="Textures/tiles.png" trans="ff00ff" width="1024" height="2016"/>
+ </tileset>
+ <layer name="Ground" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJyNlFtOAzEMRYeCRLdF0o1hs7HSjZERsXQ4MoiPq2T8uHb8mKfrcVwWnoGLZP+5n3hZeFsYC7GQG3Mjts6y3PLSxcbH5gvoJ1BxeB+IG8LJ9w575jnFH+JOxTjlt4ZvND5TuhBP5Xvb780/4jJvckz5pN7rWgRiuxed3UA/mHPny14m7EtXnORz/1OYisWz9Kwfe+va854NT/l080dO12o0YP6eP8c3j3sQ15+1qfmjH+vnuSw/2nEG672eqc4vFdc7xX3r/gHeCfaDu0gZ9y1l45p6TlxL8nG/7D/ETX/6cd9YL+fmOZlNjPr2PPO9nAXmSlvGi813fz2Oz+s3HjgfkhG/6hfXF4VKpRM=
+  </data>
+ </layer>
+ <layer name="Deco" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMJCAVYCBgU2Aeua5As1yo6J5uAAAaLAA1w==
+  </data>
+ </layer>
+ <layer name="Collision" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzNj8sNwjAMhn1pe+wG7S1MwEOCedIJeEhwh0naUWCSdg1c0V8YK46KyAFLn5zfjz8JUdroMqI2e2WNVY/RJ2aRE7k8XB/UDPQwIevQY9+pjDkn7sKO1gB7jcALZE2ffeAM3TKdkWM9a7Yf/2/kWM+adQX/uwjnWM+ahcYdWuM8TD28YRA1eGFf3wUfudfnn28I+Y8zvnjTCHwEPdOI/I9xLYluZTq/O3s9EvrNjWVNtGLWzKb+3W/PHgfmyJxm+m0rol1l62/3zsxF1LW2wtp7ArCij9I=
+  </data>
+ </layer>
+ <layer name="Deco_s_collision" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzVkrsOAUEUhiehI6EYlwSzj8A70JFQWCS8A+9AR0Lj8iIuPR0JjcuLuJQ+xSa7kxXFTuNPvuScnOQ7M7sjhNlMlRAzSAQgCXNYwBkuYAegAVe4ffwWfpAqGCkcabChAXUVjCaOlmX4ZxjImLNNlDnfEddJ8+k7+tQD9X3uToxvFoeIFCIq/XdsqXeu3u8MTqq4alDGVZHeHU5C1GFXr88zuLOaf4hrJL07nBSpS65en7dxdTTfHtdB+t/hX7LkTitYw8bAG7vjeMATXgbf7L8knxOikDPn6+Lq/fC9AbkHPgs=
+  </data>
+ </layer>
+ <layer name="Foreground" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjALaAGtZBgYbILYFYjtZVD5MDBtG12cPxA5AXA3ENUBcC8R1aHyYGDaMrq8eiBuAeDcQ75FFuBedjwvg0vcbiP8giaPzcQFy9Q00AACSFSKh
+  </data>
+ </layer>
+ <layer name="Deco_s_fg" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIKhAUSlGBjEpEjXJwzUI4JFXyhQLAxJnFjzg4FqQpDUwcyfCsTTkMTRzccFJgPVTEFSBzP/KhBfQxJHNx8XuAxUcwVJHbr5MIBuPrEAZj4A9RYR0Q==
+  </data>
+ </layer>
+ <layer name="Cloud" width="20" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2BgwREgPgrExwjIYZPHZyYMI5tNrnm4zMXndnLNpaaZ1HAjupvIDbtRMPwAAAKmHsM=
+  </data>
+ </layer>
+</map>
