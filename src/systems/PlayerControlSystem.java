@@ -7,7 +7,8 @@ import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import components.Player;
-import components.Position;
+import components.Transformation;
+import org.jsfml.graphics.Transformable;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Keyboard;
 
@@ -17,17 +18,18 @@ import org.jsfml.window.Keyboard;
 public class PlayerControlSystem extends EntityProcessingSystem {
 
     @Mapper
-    ComponentMapper<Position> pm;
+    ComponentMapper<Transformation> pm;
 
     @SuppressWarnings("unchecked")
     public PlayerControlSystem() {
-        super(Aspect.getAspectForAll(Player.class, Position.class));
+        super(Aspect.getAspectForAll(Player.class, Transformation.class));
     }
 
     @Override
     protected void process(Entity entity) {
 
-        Vector2f pos = pm.get(entity).getPosition();
+        Transformable transformable = pm.get(entity).getTransformable();
+        Vector2f pos = transformable.getPosition();
         float x = pos.x, y = pos.y;
 
         if (Keyboard.isKeyPressed(Keyboard.Key.UP)) {
@@ -40,8 +42,7 @@ public class PlayerControlSystem extends EntityProcessingSystem {
             x -= 10;
         }
 
-        pm.get(entity).setPosition(new Vector2f(x, y));
-
+        transformable.setPosition(new Vector2f(x, y));
     }
 
 }

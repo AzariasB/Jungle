@@ -5,7 +5,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import components.Player;
-import components.Position;
+import components.Transformation;
 import components.RenderableSprite;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
@@ -51,13 +51,13 @@ public class GameState extends AbstractApplicationState {
         
 
         Entity e = world.createEntity();
-        e.addComponent(new Position(20, 40));
+        e.addComponent(new Transformation(20, 40));
         e.addComponent(new RenderableSprite(1));
         e.addComponent(new Player());
         e.addToWorld();
 
         Entity noixCoco = world.createEntity();
-        noixCoco.addComponent(new Position(150, 150));
+        noixCoco.addComponent(new Transformation(150, 150));
         noixCoco.addComponent(new RenderableSprite(2));
         noixCoco.addToWorld();
 
