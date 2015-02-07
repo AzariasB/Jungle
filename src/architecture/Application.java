@@ -12,6 +12,7 @@ import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.event.Event;
+import sounds.MusicEngine;
 
 /**
  *
@@ -33,6 +34,10 @@ public final class Application {
         mStates.addState(state);
     }
 
+    public void setStartingState(int id) {
+        mStates.setStartingState(id);
+    }
+
     public void goToState(int stateId) {
         mStates.goToState(stateId);
     }
@@ -46,9 +51,16 @@ public final class Application {
         return mGraphicEngine;
     }
 
+    public MusicEngine getMusicEngine() {
+        Validate.notNull(mMusicEngine, "Application has to run before calling this method.");
+        return mMusicEngine;
+    }
+
     public void run() {
         /* Init application ressources */
         mGraphicEngine = new GraphicEngine(mWindowSize, mWindowName, mWindowFullscreen);
+        mMusicEngine = new MusicEngine();
+        mStates.initAll();
 
         /* Main loop */
         Clock clock = new Clock();
@@ -74,7 +86,7 @@ public final class Application {
             }
 
             /* Erase the screen and draw each game object */
-            render(currentState, window);
+            render(currentState);
         }
 
         /* Closing application ressources */
@@ -97,9 +109,11 @@ public final class Application {
         state.update(time);
     }
 
-    private void render(AbstractApplicationState state, final RenderWindow window) {
+    private void render(AbstractApplicationState state) {
+        mGraphicEngine.beginRender();
         state.render();
-        window.display();
+        mGraphicEngine.endRender();
+        
     }
 
     private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 10.f);
@@ -111,7 +125,8 @@ public final class Application {
     private final String mWindowName;
     private boolean mWindowFullscreen;
     private GraphicEngine mGraphicEngine;
-    //private SoundEngine mSoundEngine;
+    private MusicEngine mMusicEngine;
 
+    
 
 }

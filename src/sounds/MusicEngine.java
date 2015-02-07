@@ -8,6 +8,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsfml.audio.Music;
 import org.jsfml.audio.Sound;
 import org.jsfml.audio.SoundBuffer;
@@ -19,23 +21,29 @@ public class MusicEngine {
         mMusics = new HashMap<>();
     }
     
-    public Sound getSound(String sound_name) {
-        if (mSounds.keySet().contains(sound_name)) {
-            return mSounds.get(sound_name);
+    public Sound getSound(String soundName) {
+        if (mSounds.keySet().contains(soundName)) {
+            return mSounds.get(soundName);
         } else {
-            Path myPath = FileSystems.getDefault().getPath("../assets/Sounds", sound_name);
-            SoundBuffer sBuffer = new SoundBuffer();
-            Sound nSound = new Sound(sBuffer);
-            mSounds.put(sound_name, nSound);
-            return mSounds.get(sound_name);
+            try {
+                Path myPath = FileSystems.getDefault().getPath("./assets/Sounds", soundName);
+                SoundBuffer sBuffer = new SoundBuffer();
+                sBuffer.loadFromFile(myPath);
+                Sound nSound = new Sound(sBuffer);
+                mSounds.put(soundName, nSound);
+                
+            } catch (IOException ex) {
+                Logger.getLogger(MusicEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return mSounds.get(soundName);
         }
     }
 
-    public Music getMusic(String music_name) {
-        if (mMusics.keySet().contains(music_name)) {
-            return mMusics.get(music_name);
+    public Music getMusic(String musicName) {
+        if (mMusics.keySet().contains(musicName)) {
+            return mMusics.get(musicName);
         } else {
-            Path mPath = FileSystems.getDefault().getPath("./assets/Musics", music_name);
+            Path mPath = FileSystems.getDefault().getPath("./assets/Musics", musicName);
             Music mMus = new Music();
             try {
                 mMus.openFromFile(mPath);
@@ -43,8 +51,8 @@ public class MusicEngine {
                 System.err.println(ex.toString());
                 System.exit(1);
             }
-            mMusics.put(music_name, mMus);
-            return mMusics.get(music_name);
+            mMusics.put(musicName, mMus);
+            return mMusics.get(musicName);
         }
     }
 

@@ -29,6 +29,22 @@ public class StateManager {
         mStates.put(id, state);
     }
 
+    void setStartingState(int id) {
+        mCurrentState = mStates.get(id);
+    }
+
+    void initAll() {
+        for (AbstractApplicationState state : mStates.values()) {
+            state.init();
+        }
+        mCurrentState.notifyEntering();
+    }
+
+    AbstractApplicationState getCurrentState() {
+        Validate.notNull(mCurrentState);
+        return mCurrentState;
+    }
+
     void goToState(int stateId) {
         Validate.isTrue(mStates.containsKey(stateId), "This state id has no associated state. Forgot to add the state ?");
         if (mCurrentState != null) {
@@ -38,12 +54,6 @@ public class StateManager {
         mCurrentState.notifyEntering();
     }
 
-    AbstractApplicationState getCurrentState() {
-        Validate.notNull(mCurrentState);
-        return mCurrentState;
-    }
-
     private Map<Integer, AbstractApplicationState> mStates;
     private AbstractApplicationState mCurrentState;
-
 }

@@ -6,7 +6,6 @@
 package louveteau;
 
 import architecture.Application;
-import map.Map;
 import states.GameState;
 import states.MainMenuState;
 import states.SplashScreenState;
@@ -24,18 +23,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       // Map macarte = new Map("map.txt");
-        
         Application app = new Application("Louveteau");
         app.setDisplayMode(800, 600, false);
 
         app.addState(new SplashScreenState(SPLASHSCREENSTATE));
         app.addState(new MainMenuState(MAINMENUSTATE));
         app.addState(new GameState(GAMESTATE));
-        app.goToState(SPLASHSCREENSTATE);
+        app.setStartingState(GAMESTATE);
 
         app.run();
-        
     }
 
 }

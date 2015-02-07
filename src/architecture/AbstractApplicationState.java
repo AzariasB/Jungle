@@ -16,8 +16,11 @@ public abstract class AbstractApplicationState {
         mId = id;
     }
 
-    public int getId() {
+    public final int getId() {
         return mId;
+    }
+
+    public void init() {
     }
 
     public abstract void handleEvent(Event event);
@@ -30,16 +33,16 @@ public abstract class AbstractApplicationState {
     
     public  void notifyEntering(){}
 
-    protected void setApplication(Application application) {
+    protected final void setApplication(Application application) {
         mApplication = application;
     }
 
-    protected Application getApplication() {
+    protected final Application getApplication() {
         Validate.notNull(mApplication);
         return mApplication;
     }
 
-    protected GraphicEngine getGraphicEngine() {
+    protected final GraphicEngine getGraphicEngine() {
         return getApplication().getGraphicEngine();
     }
 
