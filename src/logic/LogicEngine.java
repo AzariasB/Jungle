@@ -3,14 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package physic;
+package logic;
 
 import org.jsfml.system.Time;
 
 /**
  *
  */
-public class PhysicEngine {
+public class LogicEngine {
+
+    public enum Direction {
+        UP,
+        LEFT,
+        DOWN,
+        RIGHT
+    }
 
     public void movePlayer(Direction direction) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -20,10 +27,5 @@ public class PhysicEngine {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public enum Direction {
-        UP,
-        LEFT,
-        DOWN,
-        RIGHT
-    }
+    
 }

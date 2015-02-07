@@ -5,13 +5,14 @@
  */
 package louveteau;
 
+import graphics.GraphicEngine;
+import logic.LogicEngine;
+import logic.LogicEngine.Direction;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
 import org.jsfml.window.Keyboard;
 import org.jsfml.window.event.Event;
-import physic.PhysicEngine;
-import physic.PhysicEngine.Direction;
 
 /**
  *
@@ -19,10 +20,10 @@ import physic.PhysicEngine.Direction;
 class Game {
 
     public Game() {
-        mGraphicEngine = new GraphicEngine();
+        mGraphicEngine = new GraphicEngine(800, 600, "Louveteau", false);
         mWindow = mGraphicEngine.getWindow();
 
-        mPhysicEngine = new PhysicEngine();
+        mPhysicEngine = new LogicEngine();
     }
 
     public void run() {
@@ -72,9 +73,8 @@ class Game {
     }
 
     private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 60.f);
-    private GraphicEngine mGraphicEngine;
-    private RenderWindow mWindow;
-    private PhysicEngine mPhysicEngine;
-    
+    private final GraphicEngine mGraphicEngine;
+    private final RenderWindow mWindow;
+    private final LogicEngine mPhysicEngine;
 
 }
