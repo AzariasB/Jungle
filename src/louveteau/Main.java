@@ -24,7 +24,7 @@ public class Main {
      */
     public static void main(String[] args) {
         Application app = new Application("Louveteau");
-        app.setDisplayMode(800, 600, true);
+        app.setDisplayMode(800, 600, false);
 
         app.addState(new SplashScreenState(SPLASHSCREENSTATE));
         app.addState(new MainMenuState(MAINMENUSTATE));
