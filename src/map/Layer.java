@@ -30,22 +30,9 @@ public class Layer {
         fToRead.useDelimiter(" ");
     }
 
-//    @Override
-//    public String toString() {
-//        String to_give = "";
-//        for (int ligne[] : mLayer) {
-//            for (int i : ligne) {
-//                to_give += i + ",";
-//            }
-//            to_give += "\n";
-//        }
-//        to_give += "\n";
-//        return to_give;
-//    }
-
     public int[][] getArray() {
         return mLayer;
     }
 
-    private int mLayer[][];
+    private final int mLayer[][];
 }

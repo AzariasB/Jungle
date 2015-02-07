@@ -7,6 +7,7 @@ import com.artemis.managers.GroupManager;
 import components.Player;
 import components.Transformation;
 import components.RenderableSprite;
+import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderTarget;
@@ -26,6 +27,7 @@ public class GameState extends AbstractApplicationState {
 
     public GameState(int id) {
         super(id);
+        myMap = new Map("map.txt");
     }
 
 
@@ -87,6 +89,7 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void render() {
+        myMap.render(getGraphicEngine());
         final RenderTarget target = getGraphicEngine().getRenderTarget();
         target.clear(Color.RED);
         // TODO : draw map
@@ -99,5 +102,6 @@ public class GameState extends AbstractApplicationState {
     
     private World world;
     private RenderingSystem mRenderingSystem;
+    private Map myMap;
 
 }

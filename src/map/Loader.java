@@ -19,7 +19,7 @@ public class Loader {
     public List<Layer> getLayers() {
         try {
             ArrayList<Layer> l_Layer = new ArrayList<>(Map.NB_FILTERS);
-            Scanner scan = new Scanner(new File("./assets/" + mSource));
+            Scanner scan = new Scanner(new File("./assets/Maps/" + mSource));
             /*
              Scan the header
              */
@@ -30,7 +30,7 @@ public class Loader {
              */
             Layer newLayer = null;
             do {
-                while (scan.hasNextLine() && !scan.nextLine().contains("layer"));
+                while (scan.hasNextLine() && !scan.nextLine().contains("layer")){}
 
                 if (scan.hasNext()) {
                     newLayer = readLayer(scan, layers_size);
@@ -64,7 +64,7 @@ public class Loader {
         fileScan.findInLine("width=");
         int width = fileScan.nextInt();
         fileScan.nextLine();
-        String found = fileScan.findInLine("height=");
+        fileScan.findInLine("height=");
         int height = fileScan.nextInt();
 
         Vector2i dimensions = new Vector2i(width, height);

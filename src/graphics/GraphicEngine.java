@@ -48,7 +48,7 @@ public class GraphicEngine {
         if (mTextures.containsKey(textureName)) {
             return mTextures.get(textureName);
         }
-        Path path = FileSystems.getDefault().getPath(".", "assets", "textures", textureName);
+        Path path = FileSystems.getDefault().getPath(".", "assets", "Textures", textureName);
         Texture tex = new Texture();
         try {
             tex.loadFromFile(path);
