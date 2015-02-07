@@ -8,6 +8,8 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsfml.audio.Music;
 import org.jsfml.audio.Sound;
 import org.jsfml.audio.SoundBuffer;
@@ -23,10 +25,16 @@ public class MusicEngine {
         if (mSounds.keySet().contains(sound_name)) {
             return mSounds.get(sound_name);
         } else {
-            Path myPath = FileSystems.getDefault().getPath("../assets/Sounds", sound_name);
-            SoundBuffer sBuffer = new SoundBuffer();
-            Sound nSound = new Sound(sBuffer);
-            mSounds.put(sound_name, nSound);
+            try {
+                Path myPath = FileSystems.getDefault().getPath("./assets/Sounds", sound_name);
+                SoundBuffer sBuffer = new SoundBuffer();
+                sBuffer.loadFromFile(myPath);
+                Sound nSound = new Sound(sBuffer);
+                mSounds.put(sound_name, nSound);
+                
+            } catch (IOException ex) {
+                Logger.getLogger(MusicEngine.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return mSounds.get(sound_name);
         }
     }

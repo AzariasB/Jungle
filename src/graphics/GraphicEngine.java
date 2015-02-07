@@ -5,11 +5,17 @@
  */
 package graphics;
 
-import java.util.Collection;
-import java.util.HashSet;
-import org.jsfml.graphics.Drawable;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jsfml.graphics.ConstTexture;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.WindowStyle;
@@ -20,7 +26,8 @@ public class GraphicEngine {
         /*
          Element initialisation
          */
-        mDrawables = new HashSet<>();
+        mTextures = new HashMap<>();
+
         mWindow = new RenderWindow();
 
         /*
@@ -35,6 +42,21 @@ public class GraphicEngine {
 
     public GraphicEngine(Vector2i windowSize, String windowName, boolean fullscreenMode) {
         this(windowSize.x, windowSize.y, windowName, fullscreenMode);
+    }
+
+    public ConstTexture getTexture(String textureName) {
+        if (mTextures.containsKey(textureName)) {
+            return mTextures.get(textureName);
+        }
+        Path path = FileSystems.getDefault().getPath(".", "assets", "textures", textureName);
+        Texture tex = new Texture();
+        try {
+            tex.loadFromFile(path);
+        } catch (IOException ex) {
+            Logger.getLogger(GraphicEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mTextures.put(textureName, tex);
+        return tex;
     }
 
     public void setCamera(Camera newCam) {
@@ -64,6 +86,8 @@ public class GraphicEngine {
     }
 
     private Camera mCamera;
-    private Collection<Drawable> mDrawables;
     private RenderWindow mWindow;
+
+    private Map<String, Texture> mTextures;
+
 }
