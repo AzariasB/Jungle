@@ -12,7 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jsfml.graphics.ConstFont;
 import org.jsfml.graphics.ConstTexture;
+import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Texture;
@@ -27,6 +29,7 @@ public class GraphicEngine {
          Element initialisation
          */
         mTextures = new HashMap<>();
+        mFonts = new HashMap<>();
 
         mWindow = new RenderWindow();
 
@@ -59,6 +62,21 @@ public class GraphicEngine {
         return tex;
     }
 
+    public ConstFont getFont(String fontName) {
+        if (mTextures.containsKey(fontName)) {
+            return mFonts.get(fontName);
+        }
+        Path path = FileSystems.getDefault().getPath(".", "assets", "Fonts", fontName);
+        Font font = new Font();
+        try {
+            font.loadFromFile(path);
+        } catch (IOException ex) {
+            Logger.getLogger(GraphicEngine.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        mFonts.put(fontName, font);
+        return font;
+    }
+
     public void setCamera(Camera newCam) {
         mCamera = newCam;
     }
@@ -89,5 +107,6 @@ public class GraphicEngine {
     private RenderWindow mWindow;
 
     private Map<String, Texture> mTextures;
+    private Map<String, Font> mFonts;
 
 }

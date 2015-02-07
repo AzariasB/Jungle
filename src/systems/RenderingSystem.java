@@ -25,7 +25,7 @@ public class RenderingSystem extends EntityProcessingSystem {
     ComponentMapper<RenderableSprite> rsm;
 
     private final GraphicEngine mGraphicEngine;
-    private Sprite mTmpSprite;
+    private final Sprite mTmpSprite;
 
     @SuppressWarnings("unchecked")
     public RenderingSystem(GraphicEngine graphicEngine) {
@@ -68,8 +68,6 @@ public class RenderingSystem extends EntityProcessingSystem {
         mTmpSprite.setTextureRect(rs.getRect());
 
         RenderStates renderStates = new RenderStates(transform);
-
-
         mGraphicEngine.getRenderTarget().draw(mTmpSprite, renderStates);
     }
 

@@ -4,9 +4,10 @@ import architecture.AbstractApplicationState;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
+import com.artemis.managers.TagManager;
 import components.Player;
-import components.Transformation;
 import components.RenderableSprite;
+import components.Transformation;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
@@ -16,6 +17,7 @@ import org.jsfml.window.Keyboard;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.CollectSystem;
+import systems.DebugRenderingSystem;
 import systems.PlayerControlSystem;
 import systems.RenderingSystem;
 
@@ -48,15 +50,16 @@ public class GameState extends AbstractApplicationState {
         world = new World();
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
+        world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getApplication()));
-        world.initialize();
+        
         
 
-        Entity e = world.createEntity();
-        e.addComponent(new Transformation(20, 40));
-        e.addComponent(new RenderableSprite(1));
-        e.addComponent(new Player());
-        e.addToWorld();
+        Entity player = world.createEntity();
+        player.addComponent(new Transformation(20, 40));
+        player.addComponent(new RenderableSprite(1));
+        player.addComponent(new Player());
+        player.addToWorld();
 
         Entity noixCoco = world.createEntity();
         noixCoco.addComponent(new Transformation(150, 150));
@@ -65,9 +68,14 @@ public class GameState extends AbstractApplicationState {
 
         GroupManager gm;
         world.setManager(gm = new GroupManager());
-        gm.add(e, "COLLECTORS");
+        gm.add(player, "COLLECTORS");
         gm.add(noixCoco, "COLLECTABLES");
-        
+
+        TagManager tm;
+        world.setManager(tm = new TagManager());
+        tm.register("PLAYER", player);
+
+        world.initialize();
     }
 
 
@@ -96,12 +104,17 @@ public class GameState extends AbstractApplicationState {
         mRenderingSystem.process();
         // TODO : draw HUD
 
+        mDebugRenderingSystem.process();
     }
 
     private Music gameMusic;
     
     private World world;
     private RenderingSystem mRenderingSystem;
+    private DebugRenderingSystem mDebugRenderingSystem;
     private Map myMap;
+
+    
+
 
 }
