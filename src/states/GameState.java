@@ -51,4 +51,5 @@ public class GameState extends AbstractApplicationState {
     }
 
     private Music gameMusic;
+    
 }
