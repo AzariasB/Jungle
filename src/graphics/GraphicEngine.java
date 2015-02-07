@@ -25,8 +25,8 @@ public class GraphicEngine {
         /*
         Element setup
         */
-        int style = WindowStyle.NONE ;
-        if(fullscreen){
+        int style = WindowStyle.CLOSE;
+        if (fullscreen) {
             style = WindowStyle.FULLSCREEN;
         }
         mWindow.create(new VideoMode(screen_widht, screen_height), titre_fen, style);
@@ -40,13 +40,15 @@ public class GraphicEngine {
         mDrawables.remove(d_toremove);
     }
     
-    public void render(){
+    public void render() {
+        mWindow.clear();
         /*
         Draw all the Drawable in the HashSet
         */
-        for(Drawable todraw : mDrawables){
+        for (Drawable todraw : mDrawables) {
             mWindow.draw(todraw);
         }
+        mWindow.display();
     }
     
     public RenderWindow getWindow(){
