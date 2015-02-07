@@ -25,6 +25,10 @@ public abstract class AbstractApplicationState {
     public abstract void update(Time time);
 
     public abstract void render();
+    
+    public void notifyExiting(){}
+    
+    public  void notifyEntering(){}
 
     protected void setApplication(Application application) {
         mApplication = application;
@@ -39,9 +43,8 @@ public abstract class AbstractApplicationState {
         return getApplication().getGraphicEngine();
     }
 
-    private Application mApplication;
-
     
+    private Application mApplication;
 
     
 

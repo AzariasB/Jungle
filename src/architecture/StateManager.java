@@ -13,6 +13,7 @@ import org.apache.commons.lang3.Validate;
  *
  */
 public class StateManager {
+
     private final Application mApplication;
 
     StateManager(Application application) {
@@ -30,9 +31,11 @@ public class StateManager {
 
     void goToState(int stateId) {
         Validate.isTrue(mStates.containsKey(stateId), "This state id has no associated state. Forgot to add the state ?");
-        //mCurrentState.notifyExitingState();
+        if (mCurrentState != null) {
+            mCurrentState.notifyExiting();
+        }
         mCurrentState = mStates.get(stateId);
-        //mCurrentState.notifyEnteringState();
+        mCurrentState.notifyEntering();
     }
 
     AbstractApplicationState getCurrentState() {
@@ -40,7 +43,6 @@ public class StateManager {
         return mCurrentState;
     }
 
-    
     private Map<Integer, AbstractApplicationState> mStates;
     private AbstractApplicationState mCurrentState;
 

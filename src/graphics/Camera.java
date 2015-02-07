@@ -1,6 +1,6 @@
 /*
 
-Camera du jeu
+Game's camera
 
  */
 package graphics;
