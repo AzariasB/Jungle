@@ -1,6 +1,6 @@
 /*
 
-Graphic engine of the game
+ Graphic engine of the game
 
  */
 package graphics;
@@ -14,57 +14,51 @@ import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.WindowStyle;
 
-
 public class GraphicEngine {
-    
-    public GraphicEngine(int screen_widht,int screen_height,String titre_fen,boolean fullscreen){
+
+    public GraphicEngine(int screenWidht, int screenHeight, String titre_fen, boolean fullscreen) {
         /*
-        Element initialisation
-        */
+         Element initialisation
+         */
         mDrawables = new HashSet<>();
         mWindow = new RenderWindow();
-        
+
         /*
-        Element setup
-        */
+         Element setup
+         */
         int style = WindowStyle.CLOSE;
         if (fullscreen) {
             style = WindowStyle.FULLSCREEN;
         }
-        mWindow.create(new VideoMode(screen_widht, screen_height), titre_fen, style);
+        mWindow.create(new VideoMode(screenWidht, screenHeight), titre_fen, style);
     }
 
     public GraphicEngine(Vector2i windowSize, String windowName, boolean fullscreenMode) {
         this(windowSize.x, windowSize.y, windowName, fullscreenMode);
     }
-    
-    public void addDrawable(Drawable d_toad){
-        mDrawables.add(d_toad);
-    }
-    
-    public void remove(Drawable d_toremove){
-        mDrawables.remove(d_toremove);
-    }
-    
-    public void render() {
-        mWindow.clear();
-        /*
-        Draw all the Drawable in the HashSet
-        */
-        for (Drawable todraw : mDrawables) {
-            mWindow.draw(todraw);
-        }
-        mWindow.display();
-    }
-    
-    public RenderWindow getWindow(){
-        return mWindow;
-    }
-    
-    public void setCamera(Camera newCam){
+
+    public void setCamera(Camera newCam) {
         mCamera = newCam;
     }
-    
+
+    public RenderWindow getWindow() {
+        return mWindow;
+    }
+
+    public RenderTarget getRenderTarget() {
+        return mWindow;
+    }
+
+    public void beginRender() {
+        mWindow.clear();
+        // TODO
+        //mWindow.setView(mCamera.getView());
+    }
+
+    public void endRender() {
+        mWindow.display();
+    }
+
     public void close() {
         mWindow.close();
     }
@@ -72,10 +66,4 @@ public class GraphicEngine {
     private Camera mCamera;
     private Collection<Drawable> mDrawables;
     private RenderWindow mWindow;
-
-    public RenderTarget getRenderTarget() {
-        return mWindow;
-    }
-
-    
 }

@@ -74,7 +74,7 @@ public final class Application {
             }
 
             /* Erase the screen and draw each game object */
-            render(currentState, window);
+            render(currentState);
         }
 
         /* Closing application ressources */
@@ -97,9 +97,11 @@ public final class Application {
         state.update(time);
     }
 
-    private void render(AbstractApplicationState state, final RenderWindow window) {
+    private void render(AbstractApplicationState state) {
+        mGraphicEngine.beginRender();
         state.render();
-        window.display();
+        mGraphicEngine.endRender();
+        
     }
 
     private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 10.f);
