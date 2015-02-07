@@ -116,7 +116,7 @@ public final class Application {
         
     }
 
-    private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 10.f);
+    private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 60.f);
 
     private boolean mRunning;
     private final StateManager mStates;
