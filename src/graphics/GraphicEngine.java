@@ -8,7 +8,9 @@ package graphics;
 import java.util.Collection;
 import java.util.HashSet;
 import org.jsfml.graphics.Drawable;
+import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.RenderWindow;
+import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.WindowStyle;
 
@@ -30,6 +32,10 @@ public class GraphicEngine {
             style = WindowStyle.FULLSCREEN;
         }
         mWindow.create(new VideoMode(screen_widht, screen_height), titre_fen, style);
+    }
+
+    public GraphicEngine(Vector2i windowSize, String windowName, boolean fullscreenMode) {
+        this(windowSize.x, windowSize.y, windowName, fullscreenMode);
     }
     
     public void addDrawable(Drawable d_toad){
@@ -59,8 +65,17 @@ public class GraphicEngine {
         mCamera = newCam;
     }
     
-    
+    public void close() {
+        mWindow.close();
+    }
+
     private Camera mCamera;
     private Collection<Drawable> mDrawables;
     private RenderWindow mWindow;
+
+    public RenderTarget getRenderTarget() {
+        return mWindow;
+    }
+
+    
 }

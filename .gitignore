@@ -45,7 +45,7 @@ Temporary Items
 *.html
 /lib/
 manifest.mf
-/nbproject/
+/nbproject/private/
 /build/
 /dist/
 
