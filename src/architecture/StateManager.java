@@ -46,4 +46,10 @@ public class StateManager {
     private Map<Integer, AbstractApplicationState> mStates;
     private AbstractApplicationState mCurrentState;
 
+    void initAll() {
+        for (AbstractApplicationState state : mStates.values()) {
+            state.init();
+        }
+    }
+
 }

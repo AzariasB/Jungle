@@ -6,8 +6,6 @@
 package louveteau;
 
 import architecture.Application;
-import org.jsfml.audio.Music;
-import sounds.MusicEngine;
 import states.GameState;
 import states.MainMenuState;
 import states.SplashScreenState;
@@ -31,10 +29,9 @@ public class Main {
         app.addState(new SplashScreenState(SPLASHSCREENSTATE));
         app.addState(new MainMenuState(MAINMENUSTATE));
         app.addState(new GameState(GAMESTATE));
-        app.goToState(SPLASHSCREENSTATE);
+        app.goToState(GAMESTATE);
 
         app.run();
-        
     }
 
 }

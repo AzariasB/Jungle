@@ -49,6 +49,7 @@ public final class Application {
     public void run() {
         /* Init application ressources */
         mGraphicEngine = new GraphicEngine(mWindowSize, mWindowName, mWindowFullscreen);
+        mStates.initAll();
 
         /* Main loop */
         Clock clock = new Clock();
