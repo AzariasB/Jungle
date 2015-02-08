@@ -113,7 +113,6 @@ public final class Application {
         mGraphicEngine.beginRender();
         state.render();
         mGraphicEngine.endRender();
-        
     }
 
     private static final Time TIME_PER_FRAME = Time.getSeconds(1.f / 60.f);

@@ -33,13 +33,13 @@ public class PlayerControlSystem extends EntityProcessingSystem {
         float x = pos.x, y = pos.y;
 
         if (Keyboard.isKeyPressed(Keyboard.Key.UP)) {
-            y -= 10;
+            y -= 100 * world.delta;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.RIGHT)) {
-            x += 10;
+            x += 100 * world.delta;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.DOWN)) {
-            y += 10;
+            y += 100 * world.delta;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.LEFT)) {
-            x -= 10;
+            x -= 100 * world.delta;
         }
 
         transformable.setPosition(new Vector2f(x, y));
