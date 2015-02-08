@@ -5,12 +5,14 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import components.HitBox;
 import components.Player;
 import components.RenderableSprite;
 import components.Transformation;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
 import org.jsfml.window.Keyboard;
@@ -57,6 +59,7 @@ public class GameState extends AbstractApplicationState {
         Entity player = world.createEntity();
         player.addComponent(new Transformation(20, 40));
         player.addComponent(new RenderableSprite(1));
+        player.addComponent(new HitBox(new FloatRect(0, 0, 111, 111)));
         player.addComponent(new Player());
         player.addToWorld();
 
@@ -98,9 +101,11 @@ public class GameState extends AbstractApplicationState {
     @Override
     public void render() {
         final RenderTarget target = getGraphicEngine().getRenderTarget();
+
         target.clear(Color.RED);
         // Drawing map
         myMap.render(getGraphicEngine());
+
         mRenderingSystem.process();
         // TODO : draw HUD
 

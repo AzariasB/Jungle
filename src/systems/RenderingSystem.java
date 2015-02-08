@@ -6,6 +6,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
+import components.RenderableAnimatedSprite;
 import components.RenderableSprite;
 import components.Transformation;
 import graphics.GraphicEngine;
@@ -29,7 +30,9 @@ public class RenderingSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public RenderingSystem(GraphicEngine graphicEngine) {
-        super(Aspect.getAspectForAll(Transformation.class, RenderableSprite.class));
+        super(Aspect.getAspectForAll(
+                Transformation.class, RenderableSprite.class)
+                .exclude(RenderableAnimatedSprite.class));
 
         mGraphicEngine = graphicEngine;
         mTmpSprite = new Sprite();

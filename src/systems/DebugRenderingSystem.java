@@ -9,10 +9,12 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
+import components.HitBox;
 import components.Transformation;
 import graphics.GraphicEngine;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.ConstFont;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Text;
@@ -26,6 +28,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
 
     @Mapper
     ComponentMapper<Transformation> transm;
+    @Mapper
+    ComponentMapper<HitBox> hitboxm;
 
     private final GraphicEngine mGraphicEngine;
     private Text mTmpText;
@@ -35,7 +39,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public DebugRenderingSystem(GraphicEngine graphicEngine) {
-        super(Aspect.getAspectForAll(Transformation.class));
+        super(Aspect.getAspectForAll(Transformation.class)
+                .one(Transformation.class, HitBox.class));
 
         mGraphicEngine = graphicEngine;
     }
@@ -62,8 +67,13 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity entity) {
-        StringBuffer debug = new StringBuffer();
 
+        /*
+         Groups and Tags
+         */
+        StringBuilder debug = new StringBuilder();
+
+        /* Groups */
         if (mGroupManager.isInAnyGroup(entity)) {
             ImmutableBag<String> bag = mGroupManager.getGroups(entity);
             debug.append("Groups [");
@@ -76,6 +86,7 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             debug.append("] ");
         }
 
+        /* Tags */
         StringBuffer tags = new StringBuffer();
         for (String tag : mTagManager.getRegisteredTags()) {
             if (entity == mTagManager.getEntity(tag)) {
@@ -89,10 +100,14 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             debug.append("]");
         }
 
+        /* Display */
         if (debug.length() > 0) {
             mTmpText.setString(debug.toString());
+            mTmpRectShape.setPosition(Vector2f.ZERO);
             mTmpRectShape.setSize(new Vector2f(mTmpText.getGlobalBounds().width,
                     28));
+            mTmpRectShape.setFillColor(Color.BLACK);
+            mTmpRectShape.setOutlineColor(Color.BLACK);
 
             Transform transform = transm.get(entity).getTransformable().getTransform();
             RenderStates renderStates = new RenderStates(transform);
@@ -101,7 +116,21 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             mGraphicEngine.getRenderTarget().draw(mTmpText, renderStates);
         }
 
-        
+        /*
+         HitBox
+         */
+        HitBox hitbox = hitboxm.getSafe(entity);
+        if (hitbox != null) {
+            Transform transform = transm.get(entity).getTransformable().getTransform();
+            FloatRect rhb = transform.transformRect(hitbox.getHitBox());
+            mTmpRectShape.setPosition(new Vector2f(rhb.left, rhb.top));
+            mTmpRectShape.setSize(new Vector2f(rhb.width, rhb.height));
+            mTmpRectShape.setFillColor(new Color(0, 0, 0, 0));
+            mTmpRectShape.setOutlineColor(Color.RED);
+            mTmpRectShape.setOutlineThickness(1.f);
+            mGraphicEngine.getRenderTarget().draw(mTmpRectShape);
+        }
+
     }
 
 }
