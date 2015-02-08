@@ -23,13 +23,12 @@ import systems.RenderingSystem;
  *
  */
 public class GameState extends AbstractApplicationState {
+
     private PlayerControlSystem mPlayerControlSystem;
 
     public GameState(int id) {
         super(id);
-        myMap = new Map("map.txt");
     }
-
 
     @Override
     public void notifyEntering() {
@@ -50,7 +49,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getApplication()));
         world.initialize();
-        
+        myMap = new Map("map.txt", getGraphicEngine());
 
         Entity e = world.createEntity();
         e.addComponent(new Transformation(20, 40));
@@ -67,9 +66,8 @@ public class GameState extends AbstractApplicationState {
         world.setManager(gm = new GroupManager());
         gm.add(e, "COLLECTORS");
         gm.add(noixCoco, "COLLECTABLES");
-        
-    }
 
+    }
 
     @Override
     public void handleEvent(Event e) {
@@ -89,17 +87,17 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void render() {
-        myMap.render(getGraphicEngine());
         final RenderTarget target = getGraphicEngine().getRenderTarget();
         target.clear(Color.RED);
-        // TODO : draw map
+        // Drawing map
+        myMap.render(getGraphicEngine());
         mRenderingSystem.process();
         // TODO : draw HUD
 
     }
 
     private Music gameMusic;
-    
+
     private World world;
     private RenderingSystem mRenderingSystem;
     private Map myMap;

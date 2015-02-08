@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 import org.jsfml.system.Vector2i;
 
 public class Loader {
@@ -50,6 +49,7 @@ public class Loader {
 
         return null;
     }
+    
 
     private Vector2i readHeader(Scanner fileScan) {
         /*
@@ -76,9 +76,9 @@ public class Loader {
 
         //scan.nextLine();
         scan.findInLine("type=");
-        Map.Filters filtre = Map.getFilter(scan.nextLine());
+        Map.Filter filtre = Map.getFilter(scan.nextLine());
         if (filtre != null) {
-            Layer newLayer = new Layer(l_size.x, l_size.y);
+            Layer newLayer = new Layer(l_size.x, l_size.y,filtre);
             scan.nextLine();
             newLayer.readArray(scan);
             return newLayer;

@@ -1,4 +1,3 @@
-
 package architecture;
 
 import graphics.GraphicEngine;
@@ -10,6 +9,7 @@ import org.jsfml.window.event.Event;
  *
  */
 public abstract class AbstractApplicationState {
+
     private final int mId;
 
     public AbstractApplicationState(int id) {
@@ -28,10 +28,12 @@ public abstract class AbstractApplicationState {
     public abstract void update(Time time);
 
     public abstract void render();
-    
-    public void notifyExiting(){}
-    
-    public  void notifyEntering(){}
+
+    public void notifyExiting() {
+    }
+
+    public void notifyEntering() {
+    }
 
     protected final void setApplication(Application application) {
         mApplication = application;
@@ -44,12 +46,9 @@ public abstract class AbstractApplicationState {
 
     protected final GraphicEngine getGraphicEngine() {
         return getApplication().getGraphicEngine();
+
     }
 
-    
     private Application mApplication;
-
-    
-
 
 }
