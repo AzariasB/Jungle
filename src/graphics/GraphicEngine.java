@@ -21,6 +21,7 @@ import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.WindowStyle;
+import org.jsfml.window.event.Event;
 
 public class GraphicEngine {
 
@@ -81,8 +82,8 @@ public class GraphicEngine {
         mCamera = newCam;
     }
 
-    public RenderWindow getWindow() {
-        return mWindow;
+    public Iterable<Event> getWindowEvents() {
+        return mWindow.pollEvents();
     }
 
     public RenderTarget getRenderTarget() {

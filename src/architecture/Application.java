@@ -7,7 +7,6 @@ package architecture;
 
 import graphics.GraphicEngine;
 import org.apache.commons.lang3.Validate;
-import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2i;
@@ -65,7 +64,6 @@ public final class Application {
         /* Main loop */
         Clock clock = new Clock();
         Time timeSinceLastUpdate = Time.ZERO;
-        final RenderWindow window = getGraphicEngine().getWindow();
 
         mRunning = true;
         while (mRunning) {
@@ -78,7 +76,7 @@ public final class Application {
                 timeSinceLastUpdate = Time.sub(timeSinceLastUpdate, TIME_PER_FRAME);
 
                 /* Process Input devices (keyboard, mouse, joystick, etc) */
-                handleEvents(currentState, window);
+                handleEvents(currentState);
                 /* Process Game Logic (update position, velocity, etc. of
                  each moving game object and perform collision
                  detection and AI functions) */
@@ -94,8 +92,8 @@ public final class Application {
     }
 
 
-    private void handleEvents(AbstractApplicationState state, RenderWindow window) {
-        for (Event event : window.pollEvents()) {
+    private void handleEvents(AbstractApplicationState state) {
+        for (Event event : getGraphicEngine().getWindowEvents()) {
             if (event.type == Event.Type.CLOSED) {
                 mRunning = false;
                 return;
