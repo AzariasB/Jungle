@@ -9,17 +9,20 @@ import components.CollideWithMap;
 import components.HitBox;
 import components.Player;
 import components.RenderableSprite;
+import components.SpriteAnimation;
 import components.Transformation;
 import components.Velocity;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
+import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
 import org.jsfml.window.Keyboard;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
+import systems.AnimateSystem;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
 import systems.MovemementCollideMapSystem;
@@ -63,6 +66,7 @@ public class GameState extends AbstractApplicationState {
          */
         world = new World();
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
+        world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
         world.setSystem(new MovemementCollideMapSystem(getApplication(), myMap));
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
@@ -73,15 +77,18 @@ public class GameState extends AbstractApplicationState {
         Entity player = world.createEntity();
         player.addComponent(new Transformation(200, 400));
         player.addComponent(new Velocity());
-        player.addComponent(new RenderableSprite(1));
-        player.addComponent(new HitBox(new FloatRect(0, 0, 111, 111)));
+        RenderableSprite playerRs = new RenderableSprite("run.png");
+        playerRs.setRect(new IntRect(0, 0, 58, 87));
+        player.addComponent(playerRs);
+        player.addComponent(new SpriteAnimation(8, 1000, true));
+        player.addComponent(new HitBox(new FloatRect(0, 0, 58, 87)));
         player.addComponent(new CollideWithMap());
         player.addComponent(new Player());
         player.addToWorld();
 
         Entity noixCoco = world.createEntity();
         noixCoco.addComponent(new Transformation(150, 150));
-        noixCoco.addComponent(new RenderableSprite(2));
+        noixCoco.addComponent(new RenderableSprite("coco.png"));
         noixCoco.addToWorld();
 
         GroupManager gm;
@@ -127,7 +134,7 @@ public class GameState extends AbstractApplicationState {
         mRenderingSystem.process();
         // TODO : draw HUD
 
-        mDebugRenderingSystem.process();
+        //mDebugRenderingSystem.process();
     }
 
     private Music gameMusic;

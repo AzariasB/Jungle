@@ -1,4 +1,3 @@
-
 package systems;
 
 import architecture.Application;
@@ -33,7 +32,6 @@ public class MovemementCollideMapSystem extends EntityProcessingSystem {
     private final Application mApp;
     private Map mMap;
 
-
     @SuppressWarnings("unchecked")
     public MovemementCollideMapSystem(Application app, Map map) {
         super(Aspect.getAspectForAll(
@@ -46,7 +44,6 @@ public class MovemementCollideMapSystem extends EntityProcessingSystem {
         mMap = map;
     }
 
-
     @Override
     protected void process(Entity entity) {
         Transformable transm = tm.get(entity).getTransformable();
@@ -56,18 +53,21 @@ public class MovemementCollideMapSystem extends EntityProcessingSystem {
         Vector2f pos = transm.getPosition();
         Vector2f vel = velm.getVelocity();
 
-        vel = Vector2f.mul(vel, world.delta);
-        Vector2f newPos = Vector2f.add(pos, vel);
+        if (vel.x != 0 || vel.y != 0) {
 
-        FloatRect hitbox = hitboxm.getHitBox();
+            vel = Vector2f.mul(vel, world.delta);
+            Vector2f newPos = Vector2f.add(pos, vel);
 
-        if (mMap.isHittingBlock(newPos.x + hitbox.left,
-                newPos.y + hitbox.top,
-                hitbox.width,
-                hitbox.height)) {
-            
-        } else {
-            transm.setPosition(newPos);
+            FloatRect hitbox = hitboxm.getHitBox();
+
+            if (!mMap.isHittingBlock(newPos.x + hitbox.left,
+                    newPos.y + hitbox.top,
+                    hitbox.width,
+                    hitbox.height)) {
+
+                transm.setPosition(newPos);
+            }
+
         }
 
     }

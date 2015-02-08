@@ -6,7 +6,6 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
-import components.RenderableAnimatedSprite;
 import components.RenderableSprite;
 import components.Transformation;
 import graphics.GraphicEngine;
@@ -32,7 +31,7 @@ public class RenderingSystem extends EntityProcessingSystem {
     public RenderingSystem(GraphicEngine graphicEngine) {
         super(Aspect.getAspectForAll(
                 Transformation.class, RenderableSprite.class)
-                .exclude(RenderableAnimatedSprite.class));
+        );
 
         mGraphicEngine = graphicEngine;
         mTmpSprite = new Sprite();
@@ -47,19 +46,13 @@ public class RenderingSystem extends EntityProcessingSystem {
     protected void inserted(Entity e) {
         RenderableSprite rs = rsm.get(e);
 
-        String textureName = "";
-        switch (rs.getSpriteId()) {
-            case 1:
-                textureName = "ball.png";
-                break;
-            case 2:
-                textureName = "coco.png";
-                break;
-        }
-
+        String textureName = rs.getTextureName();
+        
         ConstTexture tex = mGraphicEngine.getTexture(textureName);
         rs.setTexture(tex);
-        rs.setRect(tex.getSize());
+        if (rs.getRect() == null) {
+            rs.setRectSize(tex.getSize());
+        }
     }
 
     @Override
