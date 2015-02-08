@@ -100,8 +100,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             debug.append("]");
         }
 
-        /* Display */
-        if (debug.length() > 0) {
+        /* Display Group and Tags */
+        if (false && debug.length() > 0) {
             mTmpText.setString(debug.toString());
             mTmpRectShape.setPosition(Vector2f.ZERO);
             mTmpRectShape.setSize(new Vector2f(mTmpText.getGlobalBounds().width,

@@ -77,11 +77,11 @@ public class GameState extends AbstractApplicationState {
         Entity player = world.createEntity();
         player.addComponent(new Transformation(200, 400));
         player.addComponent(new Velocity());
-        RenderableSprite playerRs = new RenderableSprite("run.png");
-        playerRs.setRect(new IntRect(0, 0, 58, 87));
+        RenderableSprite playerRs = new RenderableSprite("joueur1.png");
+        playerRs.setRect(new IntRect(0, 0, 32, 32));
         player.addComponent(playerRs);
-        player.addComponent(new SpriteAnimation(8, 1000, true));
-        player.addComponent(new HitBox(new FloatRect(0, 0, 58, 87)));
+        player.addComponent(new SpriteAnimation(4, 500, true));
+        player.addComponent(new HitBox(new FloatRect(6, 16, 20, 16)));
         player.addComponent(new CollideWithMap());
         player.addComponent(new Player());
         player.addToWorld();
@@ -134,7 +134,7 @@ public class GameState extends AbstractApplicationState {
         mRenderingSystem.process();
         // TODO : draw HUD
 
-        //mDebugRenderingSystem.process();
+        mDebugRenderingSystem.process();
     }
 
     private Music gameMusic;

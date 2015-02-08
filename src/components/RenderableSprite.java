@@ -35,6 +35,10 @@ public class RenderableSprite extends Component {
         mRect = new IntRect(Vector2i.ZERO, size);
     }
 
+    public void setRectTop(int top) {
+        mRect = new IntRect(mRect.left, top, mRect.width, mRect.height);
+    }
+
     public void setRect(IntRect rect) {
         mRect = rect;
     }
@@ -43,6 +47,5 @@ public class RenderableSprite extends Component {
         return mTexName;
     }
 
-   
 
 }

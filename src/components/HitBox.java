@@ -23,5 +23,4 @@ public class HitBox extends Component {
         this.mHitBox = mHitBox;
     }
 
-
 }

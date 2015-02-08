@@ -39,6 +39,7 @@ public class SpriteAnimation extends Component {
         this(nbFrames, animDuration, loop, 0);
     }
 
+
     public int getStartX() {
         return mStartX;
     }
