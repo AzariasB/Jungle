@@ -17,11 +17,15 @@ import sounds.MusicEngine;
  *
  */
 public final class Application {
+    private final ApplicationOptions mOptions;
 
-    public Application(String name) {
+    public Application(String name, String[] args) {
         mWindowName = name;
         mWindowSize = new Vector2i(800, 600);
         mStates = new StateManager(this);
+        mOptions = new ApplicationOptions();
+        mOptions.put("window.size.width", 800);
+        mOptions.put("window.size.height", 600);
     }
 
     public void setDisplayMode(int width, int height, boolean fullscreen) {

@@ -6,7 +6,6 @@
 package louveteau;
 
 import architecture.Application;
-import map.Map;
 import states.GameState;
 import states.MainMenuState;
 import states.SplashScreenState;
@@ -25,7 +24,7 @@ public class Main {
      */
     public static void main(String[] args) {
         
-        Application app = new Application("Louveteau");
+        Application app = new Application("Louveteau", args);
         app.setDisplayMode(800, 600, false);
 
         app.addState(new SplashScreenState(SPLASHSCREENSTATE));
