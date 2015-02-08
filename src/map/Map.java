@@ -48,16 +48,18 @@ public class Map {
         return null;
     }
 
-    public boolean HitBlock(float x_pos, float y_pos, float width, float height) {
-        int mXPos = (int) x_pos;
-        int mYpos = (int) y_pos;
-        Vector2i positArr = getPositInArray((int)x_pos, (int)y_pos);
-        int mWidth = (int) width / TILE_SIZE;
-        int mHeight = (int) height / TILE_SIZE;
+    public boolean isHittingBlock(float x, float y, float width, float height) {
 
-        for (int y = 0; y <= mHeight; y++) {
-            for (int x = 0; x <= mWidth; x++) {
-                if(existsInLayer(positArr.x + x, positArr.y + y, mLayers.get(Filter.COLLISION.Index()))){
+        Vector2i positArr = getPositInArray((int) x, (int) y);
+
+        int mWidth = ((int) (width) + TILE_SIZE - 1) / TILE_SIZE;
+        int mHeight = ((int) (height) + TILE_SIZE - 1) / TILE_SIZE;
+
+        for (int _y = 0; _y <= mHeight; _y++) {
+            for (int _x = 0; _x <= mWidth; _x++) {
+
+                Layer lay = mLayers.get(Filter.COLLISION.Index());
+                if (lay.blockExists(positArr.x + _x, positArr.y + _y)) {
                     return true;
                 }
             }
@@ -65,9 +67,6 @@ public class Map {
         return false;
     }
     
-    private boolean existsInLayer(int x,int y,Layer lay){
-        return lay.blockExists(x, y);
-    }
 
     private Vector2i getPositInArray(int x_pos, int y_pos) {
         int xArrPos = x_pos / TILE_SIZE;
@@ -97,7 +96,7 @@ public class Map {
                         int XTextPos = (indexSp % 64);
                         int yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
                         XTextPos *= TILE_SIZE;
-                        //System.out.println("Index sprite : " + indexSp + " -X position : " + XTextPos + " - y position :" + yTextPos);
+
                         Vertex leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
                                 new Vector2f(XTextPos, yTextPos));
 
@@ -118,7 +117,7 @@ public class Map {
                     }
                 }
             }
-            lay.setVicies(verticies);
+            lay.setVerticies(verticies);
             verticies.clear();
         }
 
@@ -133,7 +132,7 @@ public class Map {
     public enum Filter {
 
         GROUND("Ground", 0),
-        DECORATION("Deco", 1),
+        DECORATION("Decoration", 1),
         COLLISION("Collision", 2),
         DECO_COL("Deco_s_collision", 3),
         FOREGROUND("Foreground", 4),

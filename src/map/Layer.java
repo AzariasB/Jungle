@@ -41,7 +41,7 @@ public class Layer {
         return mLayer;
     }
     
-    public void setVicies(ArrayList<Vertex> nwVirticies){
+    public void setVerticies(ArrayList<Vertex> nwVirticies){
         Vertex[] original = nwVirticies.toArray(new Vertex[nwVirticies.size()]);
         int nbBuffer = original.length/BUFFER_SIZE;
         if(original.length%BUFFER_SIZE != 0){
@@ -74,8 +74,14 @@ public class Layer {
         }
     }
     
-    public boolean blockExists(int x_index, int y_index){
-        return mLayer[y_index][x_index] != 0;
+    public boolean blockExists(int x_index, int y_index) {
+        // TODO : remove when we are sure our player is
+        // always into the map.
+        if (0 <= y_index && y_index < mLayer.length
+                && 0 <= x_index && x_index < mLayer[y_index].length) {
+            return mLayer[y_index][x_index] != 0;
+        }
+        return false;
     }
     
     private final int mLayer[][];
