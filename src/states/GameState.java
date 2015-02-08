@@ -9,6 +9,12 @@ import components.Player;
 import components.RenderableSprite;
 import components.Transformation;
 import map.Map;
+import org.jsfml.audio.Music;
+import org.jsfml.graphics.Color;
+import org.jsfml.graphics.RenderTarget;
+import org.jsfml.system.Time;
+import org.jsfml.window.Keyboard;
+import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
@@ -72,7 +78,6 @@ public class GameState extends AbstractApplicationState {
         world.initialize();
     }
 
-    }
 
     @Override
     public void handleEvent(Event e) {

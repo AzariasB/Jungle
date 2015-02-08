@@ -74,6 +74,10 @@ public class Layer {
         }
     }
     
+    public boolean blockExists(int x_index, int y_index){
+        return mLayer[y_index][x_index] != 0;
+    }
+    
     private final int mLayer[][];
     private List<Vertex[]> mVerticies;
     private final Map.Filter mFilter;

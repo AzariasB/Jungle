@@ -13,6 +13,7 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
 import org.jsfml.graphics.VertexArray;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 public class Map {
 
@@ -48,6 +49,43 @@ public class Map {
         return null;
     }
 
+    public boolean HitBlock(float x_pos, float y_pos, float width, float height) {
+        int mXPos = (int) x_pos;
+        int mYpos = (int) y_pos;
+        Vector2i positArr = getPositInArray((int)x_pos, (int)y_pos);
+        int mWidth = (int) width / TILE_SIZE;
+        int mHeight = (int) height / TILE_SIZE;
+
+        for (int y = 0; y <= mHeight; y++) {
+            for (int x = 0; x <= mWidth; x++) {
+                if(existsInLayer(positArr.x + x, positArr.y + y, mLayers.get(Filter.COLLISION.Index()))){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean existsInLayer(int x,int y,Layer lay){
+        return lay.blockExists(x, y);
+    }
+
+    private Vector2i getPositInArray(int x_pos, int y_pos) {
+        int xArrPos = x_pos / TILE_SIZE;
+        int yArrPos = y_pos / TILE_SIZE;
+
+        return new Vector2i(xArrPos, yArrPos);
+    }
+
+    public void render(GraphicEngine drawInIt) {
+        //System.out.println("Taille : " + mVertexs.size());
+        RenderStates render = new RenderStates(mTexture);
+
+        for (Layer lay : mLayers) {
+            lay.drawYourSelf(drawInIt, render);
+        }
+    }
+
     private void loadVertex() {
         ArrayList<Vertex> verticies = new ArrayList<>();
         for (Layer lay : mLayers) {
@@ -61,7 +99,6 @@ public class Map {
                         int yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
                         XTextPos *= TILE_SIZE;
                         //System.out.println("Index sprite : " + indexSp + " -X position : " + XTextPos + " - y position :" + yTextPos);
-                        System.out.println(" X pos : " + x_arr + " y pos : " + y_arr);
                         Vertex leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
                                 new Vector2f(XTextPos, yTextPos));
 
@@ -86,15 +123,6 @@ public class Map {
             verticies.clear();
         }
 
-    }
-
-    public void render(GraphicEngine drawInIt) {
-        //System.out.println("Taille : " + mVertexs.size());
-        RenderStates render = new RenderStates(mTexture);
-
-        for (Layer lay : mLayers) {
-            lay.drawYourSelf(drawInIt, render);
-        }
     }
 
     private List<Layer> mLayers;
