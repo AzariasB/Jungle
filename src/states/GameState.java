@@ -55,11 +55,12 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void init() {
+        getApplication().getOptions().setIfUnset("map.filename", "map.txt");
 
         /*
          Environnement creation
          */
-        myMap = new Map("map.txt", getGraphicEngine());
+        myMap = new Map(getApplication().getOptions().get("map.filename"), getGraphicEngine());
 
         /*
          World entities creation
@@ -135,6 +136,7 @@ public class GameState extends AbstractApplicationState {
         // TODO : draw HUD
 
         mDebugRenderingSystem.process();
+        
     }
 
     private Music gameMusic;

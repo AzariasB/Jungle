@@ -20,17 +20,15 @@ public final class Application {
     private final ApplicationOptions mOptions;
 
     public Application(String name, String[] args) {
-        mWindowName = name;
-        mWindowSize = new Vector2i(800, 600);
         mStates = new StateManager(this);
-        mOptions = new ApplicationOptions();
-        mOptions.put("window.size.width", 800);
-        mOptions.put("window.size.height", 600);
+        mOptions = new ApplicationOptions(args);
+        mOptions.set("window.name", name);
+
     }
 
     public void setDisplayMode(int width, int height, boolean fullscreen) {
-        mWindowSize = new Vector2i(width, height);
-        mWindowFullscreen = fullscreen;
+        mOptions.setIfUnset("window.size.width", width);
+        mOptions.setIfUnset("window.size.height", height);
     }
 
     public void addState(AbstractApplicationState state) {
@@ -49,6 +47,10 @@ public final class Application {
         mRunning = false;
     }
 
+    public ApplicationOptions getOptions() {
+        return mOptions;
+    }
+
     public GraphicEngine getGraphicEngine() {
         Validate.notNull(mGraphicEngine, "Application has to run before calling this method.");
         return mGraphicEngine;
@@ -61,7 +63,13 @@ public final class Application {
 
     public void run() {
         /* Init application ressources */
-        mGraphicEngine = new GraphicEngine(mWindowSize, mWindowName, mWindowFullscreen);
+        mGraphicEngine = new GraphicEngine(
+                new Vector2i(
+                        mOptions.get("window.size.width", 800),
+                        mOptions.get("window.size.heigth", 600)),
+                mOptions.get("window.name"),
+                mOptions.get("window.fullscreen", false));
+        
         mMusicEngine = new MusicEngine();
         mStates.initAll();
 
@@ -121,13 +129,10 @@ public final class Application {
 
     private boolean mRunning;
     private final StateManager mStates;
-
-    private Vector2i mWindowSize;
-    private final String mWindowName;
-    private boolean mWindowFullscreen;
     private GraphicEngine mGraphicEngine;
     private MusicEngine mMusicEngine;
 
     
+
 
 }
