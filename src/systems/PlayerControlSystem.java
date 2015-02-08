@@ -7,8 +7,7 @@ import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
 import components.Player;
-import components.Transformation;
-import org.jsfml.graphics.Transformable;
+import components.Velocity;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.Keyboard;
 
@@ -18,31 +17,32 @@ import org.jsfml.window.Keyboard;
 public class PlayerControlSystem extends EntityProcessingSystem {
 
     @Mapper
-    ComponentMapper<Transformation> pm;
+    ComponentMapper<Velocity> vm;
 
     @SuppressWarnings("unchecked")
     public PlayerControlSystem() {
-        super(Aspect.getAspectForAll(Player.class, Transformation.class));
+        super(Aspect.getAspectForAll(Player.class,
+                Velocity.class));
     }
+
+    private final float VELOCITY = 100;
 
     @Override
     protected void process(Entity entity) {
 
-        Transformable transformable = pm.get(entity).getTransformable();
-        Vector2f pos = transformable.getPosition();
-        float x = pos.x, y = pos.y;
+        float x = 0, y = 0;
 
         if (Keyboard.isKeyPressed(Keyboard.Key.UP)) {
-            y -= 100 * world.delta;
+            y -= VELOCITY;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.RIGHT)) {
-            x += 100 * world.delta;
+            x += VELOCITY;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.DOWN)) {
-            y += 100 * world.delta;
+            y += VELOCITY;
         } else if (Keyboard.isKeyPressed(Keyboard.Key.LEFT)) {
-            x -= 100 * world.delta;
+            x -= VELOCITY;
         }
 
-        transformable.setPosition(new Vector2f(x, y));
+        vm.get(entity).setVelocity(new Vector2f(x, y));
     }
 
 }

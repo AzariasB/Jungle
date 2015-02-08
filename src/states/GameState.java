@@ -9,6 +9,7 @@ import components.HitBox;
 import components.Player;
 import components.RenderableSprite;
 import components.Transformation;
+import components.Velocity;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
@@ -20,6 +21,7 @@ import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
+import systems.MovemementSystem;
 import systems.PlayerControlSystem;
 import systems.RenderingSystem;
 
@@ -50,6 +52,7 @@ public class GameState extends AbstractApplicationState {
     public void init() {
         world = new World();
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
+        world.setSystem(new MovemementSystem());
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getApplication()));
@@ -58,6 +61,7 @@ public class GameState extends AbstractApplicationState {
 
         Entity player = world.createEntity();
         player.addComponent(new Transformation(20, 40));
+        player.addComponent(new Velocity());
         player.addComponent(new RenderableSprite(1));
         player.addComponent(new HitBox(new FloatRect(0, 0, 111, 111)));
         player.addComponent(new Player());
