@@ -12,7 +12,6 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
 import org.jsfml.graphics.VertexArray;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 
 public class Map {
 
@@ -50,16 +49,22 @@ public class Map {
 
     public boolean isHittingBlock(float x, float y, float width, float height) {
 
-        Vector2i positArr = getPositInArray((int) x, (int) y);
+        int _x = (int) x;
+        int _y = (int) y;
+        int _w = (int) width;
+        int _h = (int) height;
 
-        int mWidth = ((int) (width) + TILE_SIZE - 1) / TILE_SIZE;
-        int mHeight = ((int) (height) + TILE_SIZE - 1) / TILE_SIZE;
+        int _sx = _x / TILE_SIZE;
+        int _sy = _y / TILE_SIZE;
 
-        for (int _y = 0; _y <= mHeight; _y++) {
-            for (int _x = 0; _x <= mWidth; _x++) {
+        int _ex = (_x + _w - 1) / TILE_SIZE;
+        int _ey = (_y + _h - 1) / TILE_SIZE;
+
+        for (int _iy = _sy; _iy <= _ey; _iy++) {
+            for (int _ix = _sx; _ix <= _ex; _ix++) {
 
                 Layer lay = mLayers.get(Filter.COLLISION.Index());
-                if (lay.blockExists(positArr.x + _x, positArr.y + _y)) {
+                if (lay.blockExists(_ix, _iy)) {
                     return true;
                 }
             }
@@ -68,12 +73,6 @@ public class Map {
     }
     
 
-    private Vector2i getPositInArray(int x_pos, int y_pos) {
-        int xArrPos = x_pos / TILE_SIZE;
-        int yArrPos = y_pos / TILE_SIZE;
-
-        return new Vector2i(xArrPos, yArrPos);
-    }
 
     public void render(GraphicEngine drawInIt) {
         //System.out.println("Taille : " + mVertexs.size());
