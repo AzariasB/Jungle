@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import components.CollideWithMap;
 import components.HitBox;
 import components.Player;
 import components.RenderableSprite;
@@ -21,6 +22,7 @@ import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
+import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
 import systems.PlayerControlSystem;
 import systems.RenderingSystem;
@@ -50,20 +52,30 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void init() {
+
+        /*
+         Environnement creation
+         */
+        myMap = new Map("map.txt", getGraphicEngine());
+
+        /*
+         World entities creation
+         */
         world = new World();
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new MovemementSystem());
+        world.setSystem(new MovemementCollideMapSystem(getApplication(), myMap));
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getApplication()));
         world.initialize();
-        myMap = new Map("map.txt", getGraphicEngine());
-
+        
         Entity player = world.createEntity();
-        player.addComponent(new Transformation(20, 40));
+        player.addComponent(new Transformation(200, 400));
         player.addComponent(new Velocity());
         player.addComponent(new RenderableSprite(1));
         player.addComponent(new HitBox(new FloatRect(0, 0, 111, 111)));
+        player.addComponent(new CollideWithMap());
         player.addComponent(new Player());
         player.addToWorld();
 
@@ -83,6 +95,8 @@ public class GameState extends AbstractApplicationState {
         tm.register("PLAYER", player);
 
         world.initialize();
+
+        
     }
 
 
@@ -106,7 +120,7 @@ public class GameState extends AbstractApplicationState {
     public void render() {
         final RenderTarget target = getGraphicEngine().getRenderTarget();
 
-        target.clear(Color.RED);
+        target.clear(new Color(64, 64, 64));
         // Drawing map
         myMap.render(getGraphicEngine());
 

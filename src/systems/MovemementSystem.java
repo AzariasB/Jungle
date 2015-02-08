@@ -6,6 +6,7 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
+import components.CollideWithMap;
 import components.Transformation;
 import components.Velocity;
 import org.jsfml.graphics.Transformable;
@@ -24,7 +25,8 @@ public class MovemementSystem extends EntityProcessingSystem {
 
     @SuppressWarnings("unchecked")
     public MovemementSystem() {
-        super(Aspect.getAspectForAll(Transformation.class, Velocity.class));
+        super(Aspect.getAspectForAll(Transformation.class, Velocity.class)
+                .exclude(CollideWithMap.class));
     }
 
     @Override
