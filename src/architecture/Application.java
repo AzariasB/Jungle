@@ -39,23 +39,28 @@ public final class Application implements AppContent {
         mStates.setStartingState(id);
     }
 
+    @Override
     public void goToState(int stateId) {
         mStates.goToState(stateId);
     }
 
+    @Override
     public void exit() {
         mRunning = false;
     }
 
+    @Override
     public ApplicationOptions getOptions() {
         return mOptions;
     }
 
+    @Override
     public GraphicEngine getGraphicEngine() {
         Validate.notNull(mGraphicEngine, "Application has to run before calling this method.");
         return mGraphicEngine;
     }
 
+    @Override
     public MusicEngine getMusicEngine() {
         Validate.notNull(mMusicEngine, "Application has to run before calling this method.");
         return mMusicEngine;
