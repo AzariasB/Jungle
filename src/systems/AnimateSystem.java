@@ -51,27 +51,13 @@ public class AnimateSystem extends IntervalEntityProcessingSystem {
         SpriteAnimation ras = sam.get(entity);
 
         if (ras.isPlaying()) {
-
             ras.addElapsedTime(mElapsedTime);
 
             while (ras.getElapsedTime() > ras.getFrameDuration()) {
                 ras.addElapsedTime(-ras.getFrameDuration());
-                
                 // move frame
-                IntRect rect = rs.getRect();
-
-                int left = 0;
-                if (ras.getIndexFrame() < ras.getNbFrames()) {
-                    left = rect.left + rect.width;
-                } else if (ras.isLoop()) {
-                    left = ras.getStartX();
-                    ras.setIndexFrame(0);
-                } else {
-                    ras.setPlaying(false);
-                }
-
-                rs.setRect(new IntRect(left, rect.top, rect.width, rect.height));
-                ras.incrementIndexFrame();
+                IntRect newRect = ras.getNextFrameMovement(rs.getRect());
+                rs.setRect(newRect);
             }
         }
     }

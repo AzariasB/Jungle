@@ -1,7 +1,7 @@
-
 package components;
 
 import com.artemis.Component;
+import org.jsfml.graphics.IntRect;
 
 /**
  *
@@ -16,6 +16,8 @@ public class SpriteAnimation extends Component {
     private long mElapsedTime;
     private int mIndex;
     private boolean mPlaying;
+    private int mStartY;
+    private final int mNbFrameRows;
 
     /**
      *
@@ -23,8 +25,11 @@ public class SpriteAnimation extends Component {
      * @param animDuration Animation duration in milliseconds
      * @param loop
      * @param startX First frame position into the texture
+     * @param nbFrameRows
+     * @param startY
      */
-    public SpriteAnimation(int nbFrames, long animDuration, boolean loop, int startX) {
+    public SpriteAnimation(int nbFrames, long animDuration, boolean loop, int startX,
+            int startY, int nbFrameRows) {
         mNbFrames = nbFrames;
         mAnimDuration = animDuration;
         mFrameDuration = animDuration / nbFrames;
@@ -33,12 +38,13 @@ public class SpriteAnimation extends Component {
         mElapsedTime = 0;
         mIndex = nbFrames + 1;
         mPlaying = true;
+        mStartY = startY;
+        mNbFrameRows = nbFrameRows;
     }
 
     public SpriteAnimation(int nbFrames, long animDuration, boolean loop) {
-        this(nbFrames, animDuration, loop, 0);
+        this(nbFrames, animDuration, loop, 0, 0, 1);
     }
-
 
     public int getStartX() {
         return mStartX;
@@ -89,7 +95,7 @@ public class SpriteAnimation extends Component {
         mElapsedTime = 0;
     }
 
-    public void incrementIndexFrame() {
+    protected void incrementIndexFrame() {
         mIndex++;
     }
 
@@ -107,6 +113,27 @@ public class SpriteAnimation extends Component {
 
     public void setPlaying(boolean val) {
         mPlaying = val;
+    }
+
+    public void setStartY(int val) {
+        mStartY = val;
+    }
+
+    public IntRect getNextFrameMovement(IntRect currentFrame) {
+        int left = currentFrame.left;
+        int top = currentFrame.top;
+
+        if (getIndexFrame() < getNbFrames() - 1) {
+            left += currentFrame.width;
+        } else if (isLoop()) {
+            left = getStartX();
+            setIndexFrame(0);
+        } else {
+            setPlaying(false);
+        }
+        incrementIndexFrame();
+
+        return new IntRect(left, top, currentFrame.width, currentFrame.height);
     }
 
 }
