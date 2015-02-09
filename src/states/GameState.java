@@ -54,7 +54,7 @@ public class GameState extends AbstractApplicationState {
     }
 
     @Override
-    public void init() {
+    public void initialize() {
         getApplication().getOptions().setIfUnset("map.filename", "map.txt");
 
         /*

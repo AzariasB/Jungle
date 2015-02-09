@@ -35,7 +35,7 @@ public class StateManager {
 
     void initAll() {
         for (AbstractApplicationState state : mStates.values()) {
-            state.init();
+            state.initialize();
         }
         mCurrentState.notifyEntering();
     }

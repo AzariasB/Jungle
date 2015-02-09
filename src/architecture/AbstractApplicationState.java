@@ -20,7 +20,7 @@ public abstract class AbstractApplicationState {
         return mId;
     }
 
-    public void init() {
+    public void initialize() {
     }
 
     public abstract void handleEvent(Event event);
