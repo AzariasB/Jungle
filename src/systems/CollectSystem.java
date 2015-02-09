@@ -25,7 +25,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
     @Mapper
     ComponentMapper<HitBox> hm;
 
-    private final AppContent mApplication;
+    private final AppContent mAppContent;
 
     @SuppressWarnings("unchecked")
     public CollectSystem(AppContent application) {
@@ -34,7 +34,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
                 Transformation.class,
                 HitBox.class
         ), 0.01f);
-        mApplication = application;
+        mAppContent = application;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
                 
                 if (orHitbox.intersection(ableHitbox) != null) {
                     collectable.deleteFromWorld();
-                    //mApplication.getMusicEngine().getMusic("happy.ogg").play();
+                    mAppContent.getMusicEngine().getSound("coin.wav").play();
                 }
 
             }

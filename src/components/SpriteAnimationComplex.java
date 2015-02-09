@@ -30,6 +30,7 @@ public class SpriteAnimationComplex extends SpriteAnimation {
 
         mNbRows = nbRows;
         mStartY = startY;
+        
         mIndexRow = 0;
     }
 

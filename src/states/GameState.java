@@ -88,8 +88,11 @@ public class GameState extends AbstractApplicationState {
         player.addToWorld();
 
         EntityFactory.createNoixCoco(world, 150, 350);
+
+        EntityFactory.createCoin(world, 300, 400);
+        EntityFactory.createCoin(world, 350, 400);
         EntityFactory.createCoin(world, 250, 400);
-       
+
 
         GroupManager gm;
         world.setManager(gm = new GroupManager());

@@ -26,6 +26,7 @@ public class EntityFactory {
         return noixCoco;
     }
 
+
     public static void createCoin(World world, int x, int y) {
         Entity coin = world.createEntity();
         Transformation t = new Transformation(x, y);
