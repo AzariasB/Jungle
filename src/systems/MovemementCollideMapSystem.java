@@ -1,6 +1,6 @@
 package systems;
 
-import architecture.Application;
+import architecture.AppContent;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -29,11 +29,11 @@ public class MovemementCollideMapSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<HitBox> hbm;
 
-    private final Application mApp;
+    private final AppContent mApp;
     private Map mMap;
 
     @SuppressWarnings("unchecked")
-    public MovemementCollideMapSystem(Application app, Map map) {
+    public MovemementCollideMapSystem(AppContent app, Map map) {
         super(Aspect.getAspectForAll(
                 Transformation.class,
                 Velocity.class,

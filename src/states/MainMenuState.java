@@ -21,7 +21,7 @@ public class MainMenuState extends AbstractApplicationState {
     public void handleEvent(Event event) {
 
         if (event.type == Event.Type.KEY_PRESSED) {
-            getApplication().goToState(Main.GAMESTATE);
+            getAppContent().goToState(Main.GAMESTATE);
         }
     }
 

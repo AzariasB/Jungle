@@ -16,7 +16,7 @@ import sounds.MusicEngine;
 /**
  *
  */
-public final class Application {
+public final class Application implements AppContent {
     private final ApplicationOptions mOptions;
 
     public Application(String name, String[] args) {

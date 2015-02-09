@@ -21,7 +21,7 @@ public class SplashScreenState extends AbstractApplicationState {
     public void handleEvent(Event event) {
         // TODO
         if (event.type == Event.Type.KEY_PRESSED) {
-            getApplication().goToState(Main.MAINMENUSTATE);
+            getAppContent().goToState(Main.MAINMENUSTATE);
         }
     }
 

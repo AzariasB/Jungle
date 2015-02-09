@@ -43,7 +43,7 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void notifyEntering() {
-        MusicEngine mesMusiques = getApplication().getMusicEngine();
+        MusicEngine mesMusiques = getAppContent().getMusicEngine();
         gameMusic = mesMusiques.getMusic("happy.ogg");
         //gameMusic.play();
     }
@@ -55,12 +55,12 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void initialize() {
-        getApplication().getOptions().setIfUnset("map.filename", "map.txt");
+        getAppContent().getOptions().setIfUnset("map.filepath", "map.txt");
 
         /*
          Environnement creation
          */
-        myMap = new Map(getApplication().getOptions().get("map.filename"), getGraphicEngine());
+        myMap = new Map(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
 
         /*
          World entities creation
@@ -69,10 +69,10 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
-        world.setSystem(new MovemementCollideMapSystem(getApplication(), myMap));
+        world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
-        world.setSystem(new CollectSystem(getApplication()));
+        world.setSystem(new CollectSystem(getAppContent()));
         world.initialize();
         
         Entity player = world.createEntity();
@@ -113,8 +113,7 @@ public class GameState extends AbstractApplicationState {
         // TODO
         if (e.type == Event.Type.KEY_PRESSED
                 && e.asKeyEvent().key == Keyboard.Key.ESCAPE) {
-            //getApplication().goToState(Main.MAINMENUSTATE);
-            getApplication().exit();
+            getAppContent().exit();
         }
     }
 

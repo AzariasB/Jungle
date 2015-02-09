@@ -39,13 +39,13 @@ public abstract class AbstractApplicationState {
         mApplication = application;
     }
 
-    protected final Application getApplication() {
+    protected final AppContent getAppContent() {
         Validate.notNull(mApplication);
         return mApplication;
     }
 
     protected final GraphicEngine getGraphicEngine() {
-        return getApplication().getGraphicEngine();
+        return getAppContent().getGraphicEngine();
 
     }
 

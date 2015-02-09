@@ -1,7 +1,7 @@
 
 package systems;
 
-import architecture.Application;
+import architecture.AppContent;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
@@ -18,9 +18,10 @@ public class CollectSystem extends VoidEntitySystem {
 
     @Mapper
     ComponentMapper<Transformation> pm;
-    private final Application mApplication;
 
-    public CollectSystem(Application application) {
+    private final AppContent mApplication;
+
+    public CollectSystem(AppContent application) {
         super();
         mApplication = application;
     }
@@ -52,6 +53,7 @@ public class CollectSystem extends VoidEntitySystem {
                         }
                     }
                 }
+
             }
         }
     }
