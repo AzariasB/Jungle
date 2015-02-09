@@ -18,7 +18,7 @@ public class Loader {
     public List<Layer> getLayers() {
         try {
             ArrayList<Layer> l_Layer = new ArrayList<>(Map.NB_FILTERS);
-            Scanner scan = new Scanner(new File("./assets/Maps/" + mSource));
+            Scanner scan = new Scanner(new File(mSource));
             /*
              Scan the header
              */

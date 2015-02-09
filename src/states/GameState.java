@@ -12,6 +12,7 @@ import components.RenderableSprite;
 import components.SpriteAnimation;
 import components.Transformation;
 import components.Velocity;
+import entities.EntityFactory;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
@@ -19,7 +20,6 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
-import org.jsfml.window.Keyboard;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.AnimateSystem;
@@ -55,7 +55,7 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void initialize() {
-        getAppContent().getOptions().setIfUnset("map.filepath", "map.txt");
+        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/map.txt");
 
         /*
          Environnement creation
@@ -87,16 +87,11 @@ public class GameState extends AbstractApplicationState {
         player.addComponent(new Player());
         player.addToWorld();
 
-        Entity noixCoco = world.createEntity();
-        noixCoco.addComponent(new Transformation(150, 150));
-        noixCoco.addComponent(new RenderableSprite("coco.png"));
-        noixCoco.addToWorld();
+        EntityFactory.createNoixCoco(world, 150, 350);
 
         GroupManager gm;
         world.setManager(gm = new GroupManager());
         gm.add(player, "COLLECTORS");
-        gm.add(noixCoco, "COLLECTABLES");
-
 
         TagManager tm;
         world.setManager(tm = new TagManager());
@@ -111,9 +106,16 @@ public class GameState extends AbstractApplicationState {
     @Override
     public void handleEvent(Event e) {
         // TODO
-        if (e.type == Event.Type.KEY_PRESSED
-                && e.asKeyEvent().key == Keyboard.Key.ESCAPE) {
-            getAppContent().exit();
+        if (e.type == Event.Type.KEY_PRESSED) {
+
+            switch (e.asKeyEvent().key) {
+                case ESCAPE:
+                    getAppContent().exit();
+                    break;
+                case R:
+                    initialize();
+                    break;
+            }
         }
     }
 

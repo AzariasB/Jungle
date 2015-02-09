@@ -15,9 +15,9 @@ import org.jsfml.system.Vector2f;
 
 public class Map {
 
-    public Map(String map_source, GraphicEngine g_eng) {
+    public Map(String mapSourcePath, GraphicEngine g_eng) {
         mLayers = new ArrayList<>();
-        Loader fileLoad = new Loader(map_source);
+        Loader fileLoad = new Loader(mapSourcePath);
         mLayers = fileLoad.getLayers();
         mTexture = g_eng.getTexture("tiles.png");
         displayMap();
