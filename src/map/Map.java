@@ -15,17 +15,25 @@ import org.jsfml.system.Vector2f;
 
 public class Map {
 
-    public Map(String mapSourcePath, GraphicEngine g_eng) {
+    public Map(GraphicEngine g_eng) {
         mLayers = new ArrayList<>();
-        Loader fileLoad = new Loader(mapSourcePath);
-        mLayers = fileLoad.getLayers();
+        mObjects = new ArrayList<>();
+        //Loader fileLoad = new Loader(mapSourcePath);
+        //mLayers = fileLoad.getLayers();
         mTexture = g_eng.getTexture("tiles.png");
-        displayMap();
         loadVertex();
     }
 
     public List<Layer> getLayers() {
         return mLayers;
+    }
+    
+    public void setObjects(List<MapObject> myNewObjects){
+        mObjects = myNewObjects;
+    }
+    
+    public void setLayers(List<Layer> myNewLayers){
+        mLayers = myNewLayers;
     }
 
     public void displayMap() {
@@ -71,8 +79,6 @@ public class Map {
         }
         return false;
     }
-    
-
 
     public void render(GraphicEngine drawInIt) {
         //System.out.println("Taille : " + mVertexs.size());
@@ -123,6 +129,7 @@ public class Map {
     }
 
     private List<Layer> mLayers;
+    private List<MapObject> mObjects;
     private final ConstTexture mTexture;
 
     public static final int NB_FILTERS = 7;

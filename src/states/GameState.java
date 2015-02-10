@@ -13,6 +13,7 @@ import components.SpriteAnimation;
 import components.Transformation;
 import components.Velocity;
 import entities.EntityFactory;
+import map.Loader;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
@@ -25,7 +26,6 @@ import sounds.MusicEngine;
 import systems.AnimateSystem;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
-import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
 import systems.PlayerControlSystem;
 import systems.RenderingSystem;
@@ -55,12 +55,14 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void initialize() {
-        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/map.txt");
+        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/test1.tmx");
 
         /*
          Environnement creation
+        New map creation system : with 'Loader.getMap()'
          */
-        myMap = new Map(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
+        // myMap = new Map(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
+        Loader myLoad = new Loader("test1.tmx",getGraphicEngine());
 
         /*
          World entities creation
@@ -69,7 +71,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
-        world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
+        //world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
@@ -81,7 +83,7 @@ public class GameState extends AbstractApplicationState {
         RenderableSprite playerRs = new RenderableSprite("joueur1.png");
         playerRs.setRect(new IntRect(0, 0, 32, 32));
         player.addComponent(playerRs);
-        player.addComponent(new SpriteAnimation(4, 500, true));
+        player.addComponent(new SpriteAnimation(3, 500, true));
         player.addComponent(new HitBox(new FloatRect(6, 16, 20, 16)));
         player.addComponent(new CollideWithMap());
         player.addComponent(new Player());
@@ -131,7 +133,7 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
-        myMap.render(getGraphicEngine());
+//        myMap.render(getGraphicEngine());
 
         mRenderingSystem.process();
         // TODO : draw HUD
