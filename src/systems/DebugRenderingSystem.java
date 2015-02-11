@@ -19,6 +19,7 @@ import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Text;
 import org.jsfml.graphics.Transform;
+import org.jsfml.graphics.Transformable;
 import org.jsfml.system.Vector2f;
 
 /**
@@ -121,8 +122,9 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
          */
         HitBox hitbox = hitboxm.getSafe(entity);
         if (hitbox != null) {
-            Transform transform = transm.get(entity).getTransformable().getTransform();
-            FloatRect rhb = transform.transformRect(hitbox.getHitBox());
+            Transformable transformable = transm.get(entity).getTransformable();
+            FloatRect rhb = hitbox.moveCopy(transformable.getPosition());
+            
             mTmpRectShape.setPosition(new Vector2f(rhb.left, rhb.top));
             mTmpRectShape.setSize(new Vector2f(rhb.width, rhb.height));
             mTmpRectShape.setFillColor(new Color(0, 0, 0, 0));

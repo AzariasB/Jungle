@@ -1,7 +1,7 @@
-
 package components;
 
 import com.artemis.Component;
+import org.jsfml.graphics.IntRect;
 
 /**
  *
@@ -39,21 +39,8 @@ public class SpriteAnimation extends Component {
         this(nbFrames, animDuration, loop, 0);
     }
 
-
-    public int getStartX() {
-        return mStartX;
-    }
-
-    public void setStartX(int startX) {
-        this.mStartX = startX;
-    }
-
     public int getNbFrames() {
         return mNbFrames;
-    }
-
-    public void setNbFrames(int nbFrames) {
-        this.mNbFrames = nbFrames;
     }
 
     public long getAnimationDuration() {
@@ -89,24 +76,46 @@ public class SpriteAnimation extends Component {
         mElapsedTime = 0;
     }
 
-    public void incrementIndexFrame() {
-        mIndex++;
-    }
-
-    public int getIndexFrame() {
-        return mIndex;
-    }
-
-    public void setIndexFrame(int index) {
-        mIndex = index;
-    }
-
     public boolean isPlaying() {
         return mPlaying;
     }
 
     public void setPlaying(boolean val) {
         mPlaying = val;
+    }
+
+    protected int getStartX() {
+        return mStartX;
+    }
+
+    protected void incrementIndexFrame() {
+        mIndex++;
+    }
+
+    protected int getIndexFrame() {
+        return mIndex;
+    }
+
+    protected void setIndexFrame(int index) {
+        mIndex = index;
+    }
+
+
+
+    public IntRect getNextFrame(IntRect currentFrame) {
+        int left = currentFrame.left;
+
+        if (getIndexFrame() < getNbFrames()) {
+            left += currentFrame.width;
+        } else if (isLoop()) {
+            left = getStartX();
+            setIndexFrame(0);
+        } else {
+            setPlaying(false);
+        }
+        incrementIndexFrame();
+
+        return new IntRect(left, currentFrame.top, currentFrame.width, currentFrame.height);
     }
 
 }

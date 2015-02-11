@@ -8,6 +8,7 @@ import com.artemis.annotations.Mapper;
 import com.artemis.systems.IntervalEntityProcessingSystem;
 import components.RenderableSprite;
 import components.SpriteAnimation;
+import components.SpriteAnimationComplex;
 import org.jsfml.graphics.IntRect;
 import org.jsfml.system.Clock;
 
@@ -22,15 +23,18 @@ public class AnimateSystem extends IntervalEntityProcessingSystem {
     @Mapper
     ComponentMapper<SpriteAnimation> sam;
 
+    @Mapper
+    ComponentMapper<SpriteAnimationComplex> sacm;
+
     private final Clock mClock;
     private long mElapsedTime;
 
     @SuppressWarnings("unchecked")
     public AnimateSystem() {
         super(Aspect.getAspectForAll(
-                RenderableSprite.class,
-                SpriteAnimation.class
-        ), 1.f / 60.f);
+                RenderableSprite.class
+                
+        ).one(SpriteAnimation.class, SpriteAnimationComplex.class), 1.f / 60.f);
 
         mClock = new Clock();
     }
@@ -48,30 +52,20 @@ public class AnimateSystem extends IntervalEntityProcessingSystem {
     @Override
     protected void process(Entity entity) {
         RenderableSprite rs = rsm.get(entity);
-        SpriteAnimation ras = sam.get(entity);
+        SpriteAnimation ras;
+        if (sam.has(entity))
+            ras = sam.get(entity);
+        else
+            ras = sacm.get(entity);
 
         if (ras.isPlaying()) {
-
             ras.addElapsedTime(mElapsedTime);
 
             while (ras.getElapsedTime() > ras.getFrameDuration()) {
                 ras.addElapsedTime(-ras.getFrameDuration());
-                
                 // move frame
-                IntRect rect = rs.getRect();
-
-                int left = 0;
-                if (ras.getIndexFrame() < ras.getNbFrames()) {
-                    left = rect.left + rect.width;
-                } else if (ras.isLoop()) {
-                    left = ras.getStartX();
-                    ras.setIndexFrame(0);
-                } else {
-                    ras.setPlaying(false);
-                }
-
-                rs.setRect(new IntRect(left, rect.top, rect.width, rect.height));
-                ras.incrementIndexFrame();
+                IntRect newRect = ras.getNextFrame(rs.getRect());
+                rs.setRect(newRect);
             }
         }
     }
