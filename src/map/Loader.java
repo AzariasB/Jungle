@@ -142,7 +142,6 @@ public class Loader {
 
     private int[][] IntbufferToInarray(int width, int height, IntBuffer toTransform) {
         int[][] toR = new int[height][width];
-        System.out.println("Capacité : " + toTransform.capacity());
         try {
             for (int i = 0; i <= height; i++) {
                 for (int j = 0; j < width && toTransform.capacity() > (i * width + j); j++) {
