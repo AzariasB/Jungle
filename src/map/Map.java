@@ -24,12 +24,16 @@ public class Map {
     public List<Layer> getLayers() {
         return mLayers;
     }
-    
-    public void setObjects(List<MapObject> myNewObjects){
+
+    public List<MapObject> getObject() {
+        return mObjects;
+    }
+
+    public void setObjects(List<MapObject> myNewObjects) {
         mObjects = myNewObjects;
     }
-    
-    public void setLayers(List<Layer> myNewLayers){
+
+    public void setLayers(List<Layer> myNewLayers) {
         mLayers = myNewLayers;
         loadVertex();
     }
@@ -59,10 +63,11 @@ public class Map {
 
         for (int _iy = _sy; _iy <= _ey; _iy++) {
             for (int _ix = _sx; _ix <= _ex; _ix++) {
-
-                Layer lay = mLayers.get(LayerType.COLLISION.Index());
-                if (lay.blockExists(_ix, _iy)) {
-                    return true;
+                if (mLayers.size() >= LayerType.COLLISION.Index()) {
+                    Layer lay = mLayers.get(LayerType.COLLISION.Index());
+                    if (lay.blockExists(_ix, _iy)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -71,14 +76,12 @@ public class Map {
 
     public void render(GraphicEngine drawInIt) {
         RenderStates render = new RenderStates(mTexture);
-
         for (Layer lay : mLayers) {
             lay.drawYourSelf(drawInIt, render);
         }
     }
 
     private void loadVertex() {
-        System.out.println("On load le vertex");
         ArrayList<Vertex> verticies = new ArrayList<>();
         for (Layer lay : mLayers) {
             int[][] myArray = lay.getArray();
@@ -87,28 +90,27 @@ public class Map {
                     int indexSp = myArray[y_arr][x_arr];
                     if (indexSp > 0) {
                         indexSp--;
-                        int XTextPos = (indexSp % 64);
-                        int yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
-                        XTextPos *= TILE_SIZE;
-
-                        Vertex leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
-                                new Vector2f(XTextPos, yTextPos));
-
-                        Vertex leftDownVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                                new Vector2f(XTextPos, yTextPos + TILE_SIZE));
-
-                        Vertex rightUpVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, y_arr * TILE_SIZE),
-                                new Vector2f(XTextPos + TILE_SIZE, yTextPos));
-
-                        Vertex rightDownVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                                new Vector2f(XTextPos + TILE_SIZE, yTextPos + TILE_SIZE));
-
-                        verticies.add(leftUpVertex);
-                        verticies.add(rightUpVertex);
-                        verticies.add(rightDownVertex);
-                        verticies.add(leftDownVertex);
-
                     }
+                    int XTextPos = (indexSp % 64);
+                    int yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
+                    XTextPos *= TILE_SIZE;
+
+                    Vertex leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
+                            new Vector2f(XTextPos, yTextPos));
+
+                    Vertex leftDownVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
+                            new Vector2f(XTextPos, yTextPos + TILE_SIZE));
+
+                    Vertex rightUpVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, y_arr * TILE_SIZE),
+                            new Vector2f(XTextPos + TILE_SIZE, yTextPos));
+
+                    Vertex rightDownVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
+                            new Vector2f(XTextPos + TILE_SIZE, yTextPos + TILE_SIZE));
+
+                    verticies.add(leftUpVertex);
+                    verticies.add(rightUpVertex);
+                    verticies.add(rightDownVertex);
+                    verticies.add(leftDownVertex);
                 }
             }
             lay.setVerticies(verticies);

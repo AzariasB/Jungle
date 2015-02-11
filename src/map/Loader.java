@@ -101,13 +101,13 @@ public class Loader {
             // Decompress the bytes
             Inflater decompresser = new Inflater();
             decompresser.setInput(decode, 0, decode.length);
-            byte[] result = new byte[100];
+            byte[] result = new byte[width*height*4];
             int resultLength = decompresser.inflate(result);
             decompresser.end();
 
             // Little endian ordering
             ByteBuffer bb = ByteBuffer.wrap(result);
-            bb.order(ByteOrder.LITTLE_ENDIAN);
+            bb.order(ByteOrder.BIG_ENDIAN);
             
             //Turn into int buffer
             IntBuffer res = bb.asIntBuffer();
@@ -142,11 +142,11 @@ public class Loader {
 
     private int[][] IntbufferToInarray(int width, int height, IntBuffer toTransform) {
         int[][] toR = new int[height][width];
-
+        System.out.println("Capacité : " + toTransform.capacity());
         try {
-            for (int i = 1; i <= height && toTransform.capacity() < i; i++) {
-                for (int j = 0; j < width && toTransform.capacity() < i * j; j++) {
-                    toR[i][j] = toTransform.get(i * j);
+            for (int i = 0; i <= height; i++) {
+                for (int j = 0; j < width && toTransform.capacity() > (i * width + j); j++) {
+                    toR[i][j] = Integer.reverseBytes(toTransform.get(i*width + j));
                 }
             }
         } catch (BufferOverflowException ex) {
