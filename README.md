@@ -1,5 +1,4 @@
 # Louveteau
-Louveteau
 ====
 Little game by two french students
 
