@@ -1,5 +1,7 @@
 # Louveteau
 ====
-Little game by two french students
-
-Nothing to tup in the readme
+Little java game by two french students
+----
+With jSFML
+---
+Nothing to tup in the readme :)
