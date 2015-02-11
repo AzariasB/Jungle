@@ -1,5 +1,6 @@
 # Louveteau
-Little game by two french students
+Louveteau
 ====
+Little game by two french students
 
-Nothing to put in the readme ... :)
+Nothing to tup in the readme
