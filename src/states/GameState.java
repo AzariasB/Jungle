@@ -26,6 +26,7 @@ import sounds.MusicEngine;
 import systems.AnimateSystem;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
+import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
 import systems.PlayerControlSystem;
 import systems.RenderingSystem;
@@ -58,11 +59,10 @@ public class GameState extends AbstractApplicationState {
         getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/test1.tmx");
 
         /*
-         Environnement creation
-        New map creation system : with 'Loader.getMap()'
-         */
-        // myMap = new Map(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
-        Loader myLoad = new Loader("test1.tmx",getGraphicEngine());
+        New Loading system : with loader class
+        */
+        Loader ld = new Loader("maps.tmx", getGraphicEngine());         
+        myMap = ld.getMap();
 
         /*
          World entities creation
@@ -71,7 +71,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
-        //world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
+        world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
@@ -133,7 +133,7 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
-//        myMap.render(getGraphicEngine());
+        myMap.render(getGraphicEngine());
 
         mRenderingSystem.process();
         // TODO : draw HUD

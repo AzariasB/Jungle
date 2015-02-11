@@ -18,10 +18,7 @@ public class Map {
     public Map(GraphicEngine g_eng) {
         mLayers = new ArrayList<>();
         mObjects = new ArrayList<>();
-        //Loader fileLoad = new Loader(mapSourcePath);
-        //mLayers = fileLoad.getLayers();
         mTexture = g_eng.getTexture("tiles.png");
-        loadVertex();
     }
 
     public List<Layer> getLayers() {
@@ -34,25 +31,17 @@ public class Map {
     
     public void setLayers(List<Layer> myNewLayers){
         mLayers = myNewLayers;
+        loadVertex();
     }
 
     public void displayMap() {
-        for (Filter fil : Filter.values()) {
+        for (LayerType fil : LayerType.values()) {
             System.out.println(fil.Name() + "==============");
             if (mLayers.get(fil.Index()) != null) {
                 System.out.println(Arrays.deepToString(mLayers.get(fil.Index()).getArray()));
             }
 
         }
-    }
-
-    public static Filter getFilter(String filterName) {
-        for (Filter fil : Filter.values()) {
-            if (fil.Name().equals(filterName)) {
-                return fil;
-            }
-        }
-        return null;
     }
 
     public boolean isHittingBlock(float x, float y, float width, float height) {
@@ -71,7 +60,7 @@ public class Map {
         for (int _iy = _sy; _iy <= _ey; _iy++) {
             for (int _ix = _sx; _ix <= _ex; _ix++) {
 
-                Layer lay = mLayers.get(Filter.COLLISION.Index());
+                Layer lay = mLayers.get(LayerType.COLLISION.Index());
                 if (lay.blockExists(_ix, _iy)) {
                     return true;
                 }
@@ -81,7 +70,6 @@ public class Map {
     }
 
     public void render(GraphicEngine drawInIt) {
-        //System.out.println("Taille : " + mVertexs.size());
         RenderStates render = new RenderStates(mTexture);
 
         for (Layer lay : mLayers) {
@@ -90,6 +78,7 @@ public class Map {
     }
 
     private void loadVertex() {
+        System.out.println("On load le vertex");
         ArrayList<Vertex> verticies = new ArrayList<>();
         for (Layer lay : mLayers) {
             int[][] myArray = lay.getArray();
@@ -135,7 +124,7 @@ public class Map {
     public static final int NB_FILTERS = 7;
     public static final int TILE_SIZE = 16;
 
-    public enum Filter {
+    public enum LayerType {
 
         GROUND("Ground", 0),
         DECORATION("Decoration", 1),
@@ -145,7 +134,7 @@ public class Map {
         DECO_FG("Deco_s_fg", 5),
         CLOUD("Cloud", 6);
 
-        private Filter(String name, int index) {
+        private LayerType(String name, int index) {
             mName = name;
             mIndex = index;
         }

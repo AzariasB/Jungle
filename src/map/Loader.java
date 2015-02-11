@@ -3,19 +3,24 @@
  */
 package map;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import graphics.GraphicEngine;
-import java.io.File;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.zip.Inflater;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.jsfml.system.Vector2i;
+import org.jsfml.system.Vector2f;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -24,26 +29,12 @@ public class Loader {
 
     public Loader(String map_source, GraphicEngine drawTarget) {
         mMap = new Map(drawTarget);
-        //Debut tests XML
-
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        try {
-            DocumentBuilder db = dbf.newDocumentBuilder();
-
-            Document dom = db.parse("assets/Maps/" + map_source);
-            parseDocument(dom);
-
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
-            System.err.println("Exception lors de l'ouverture de la carte : " + ex);
-        }
-
-        //Fin tests XML
         mSource = map_source;
+        readTMX();
     }
 
-    public Map readMap() {
-
-        return null;
+    public Map getMap() {
+        return mMap;
     }
 
     private void parseDocument(Document dom) {
@@ -53,111 +44,170 @@ public class Loader {
         NodeList nl = docEle.getElementsByTagName("objectgroup");
         if (nl != null && nl.getLength() > 0) {
 
-                //get the employee element
-                Element el = (Element) nl.item(1);
+            Element el = (Element) nl.item(1);
+            List<MapObject> mapObjts =  readObjects(el);
+            mMap.setObjects(mapObjts);
+        }
 
-                System.out.println(el.getAttribute("name"));
-                readObjects(el);
+        NodeList nlLayer = docEle.getElementsByTagName("layer");
+        if (nlLayer != null && nlLayer.getLength() > 0) {
+            ArrayList<Layer> mapLayers = new ArrayList<>();
+            for (int i = 0; i < nlLayer.getLength(); i++) {
+                mapLayers.add(readLayer(nlLayer.item(i)));
+
+            }
+            mMap.setLayers(mapLayers);
         }
     }
 
     private List<MapObject> readObjects(Element objgroup) {
         ArrayList<MapObject> theObjects = new ArrayList<>();
         NodeList mListe = objgroup.getElementsByTagName("object");
-        for(int i = 0; i < mListe.getLength(); i++ ){
-           if(mListe.item(i).getChildNodes() == null){
-               
-           }else{
-               theObjects.add(readWithProprieties(mListe.item(i)));
-           }
+
+        for (int i = 0; i < mListe.getLength(); i++) {
+            if (mListe.item(i).getChildNodes().getLength() <= 1) {
+                theObjects.add(readWithoutProprieties(mListe.item(i)));
+            } else {
+                theObjects.add(readWithProprieties(mListe.item(i)));
+            }
         }
-        
-        System.out.println(objgroup.getElementsByTagName("object").getLength());
 
-        return null;
+        return new ArrayList<>();
     }
 
-    private Layer readLayer(NodeList layer) {
+    private Layer readLayer(Node layers) {
 
-        return null;
-    }
-    
-    private MapObject readWithProprieties(Node objecWithProp){
-        
-        
-        return null;
-    }
+        NamedNodeMap lAttributes = layers.getAttributes();
 
-    public List<Layer> getLayers() {
+        /*
+         Get the layer's name
+         */
+        String name = lAttributes.getNamedItem("name").getTextContent().toUpperCase();
+        Map.LayerType lType = Map.LayerType.valueOf(name);
+
+        /*
+         Gather some informations about the layer
+         */
+        int width = Integer.parseInt(lAttributes.getNamedItem("width").getTextContent());
+        int height = Integer.parseInt(lAttributes.getNamedItem("height").getTextContent());
+
+        Element ts = (Element) layers;
+        String toDecompress = ts.getElementsByTagName("data").item(0).getTextContent().trim();
+
         try {
-            ArrayList<Layer> l_Layer = new ArrayList<>(Map.NB_FILTERS);
-            Scanner scan = new Scanner(new File(mSource));
-            /*
-             Scan the header
-             */
-            Vector2i layers_size = readHeader(scan);
+            //Decode the base64 String
+            byte[] decode = DatatypeConverter.parseBase64Binary(toDecompress);
 
-            /*
-             Scan all the layers
-             */
-            Layer newLayer = null;
-            do {
-                while (scan.hasNextLine() && !scan.nextLine().contains("layer")) {
+            // Decompress the bytes
+            Inflater decompresser = new Inflater();
+            decompresser.setInput(decode, 0, decode.length);
+            byte[] result = new byte[100];
+            int resultLength = decompresser.inflate(result);
+            decompresser.end();
+
+            // Little endian ordering
+            ByteBuffer bb = ByteBuffer.wrap(result);
+            bb.order(ByteOrder.LITTLE_ENDIAN);
+            
+            //Turn into int buffer
+            IntBuffer res = bb.asIntBuffer();
+            
+            // Annnnd finally, we have our array
+            return new Layer(IntbufferToInarray(width, height, res), lType);
+
+        } catch (java.util.zip.DataFormatException ex) {
+            System.err.println("Erreur lors de la décompression : " + ex);
+        }
+
+        return null;
+    }
+
+    private MapObject readWithProprieties(Node objecWithProp) {
+        MapObject obj = readWithoutProprieties(objecWithProp);
+        obj.setProprieties(getProprieties((Element) objecWithProp));
+
+        return obj;
+    }
+
+    private java.util.Map<String, Object> getProprieties(Element properNode) {
+        java.util.Map<String, Object> myPropreties = new HashMap<>();
+        NodeList nodes = properNode.getElementsByTagName("property");
+        for (int i = 0; i < nodes.getLength(); i++) {
+            NamedNodeMap attri = nodes.item(i).getAttributes();
+            myPropreties.put(attri.getNamedItem("name").getTextContent(), nodes.item(i).getAttributes().getNamedItem("value"));
+        }
+
+        return myPropreties;
+    }
+
+    private int[][] IntbufferToInarray(int width, int height, IntBuffer toTransform) {
+        int[][] toR = new int[height][width];
+
+        try {
+            for (int i = 1; i <= height && toTransform.capacity() < i; i++) {
+                for (int j = 0; j < width && toTransform.capacity() < i * j; j++) {
+                    toR[i][j] = toTransform.get(i * j);
                 }
+            }
+        } catch (BufferOverflowException ex) {
+            System.out.println(" Erreur lors de la transformation de la map : " + ex);
+        }
 
-                if (scan.hasNext()) {
-                    newLayer = readLayer(scan, layers_size);
-                    /*
-                     Add new Layers to the array
-                     */
-                    if (newLayer != null) {
-                        l_Layer.add(newLayer);
-                    }
-                }
+        return toR;
+    }
 
-            } while (newLayer != null && scan.hasNextLine());
-            return l_Layer;
+    private MapObject readWithoutProprieties(Node objcLess) {
+        MapObject obj;
+        // Basic attributes
+        NamedNodeMap attr = objcLess.getAttributes();
+        int id = Integer.parseInt(attr.getNamedItem("id").getTextContent());
+        int width = Integer.parseInt(attr.getNamedItem("width").getTextContent());
+        int height = Integer.parseInt(attr.getNamedItem("height").getTextContent());
+
+        float x = Float.parseFloat(attr.getNamedItem("x").getTextContent());
+        float y = Float.parseFloat(attr.getNamedItem("y").getTextContent());
+
+        if (objcLess.getAttributes().getLength() == 5) {
+            //Only the 5 necessary attributes
+
+            obj = new MapObject(id, width, height, new Vector2f(x, y));
+        } else {
+            //More than 5 attributes ...
+            int rotation = 0;
+            String name = "";
+            String type = "";
+            if (attr.getNamedItem("rotation") != null) {
+                rotation = Integer.parseInt(attr.getNamedItem("rotation").getTextContent());
+            }
+            if (attr.getNamedItem("name") != null) {
+                name = attr.getNamedItem("name").getTextContent();
+            }
+            if (attr.getNamedItem("type") != null) {
+                type = attr.getNamedItem("type").getTextContent();
+            }
+            obj = new MapObject(name, type, id, width, height, new Vector2f(x, y), null);
+
+        }
+        return obj;
+    }
+
+    private void readTMX() {
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            try {
+                DocumentBuilder db = dbf.newDocumentBuilder();
+
+                Document dom = db.parse("assets/Maps/" + mSource);
+                parseDocument(dom);
+
+            } catch (ParserConfigurationException | SAXException | IOException ex) {
+                System.err.println("Exception lors de l'ouverture de la carte : " + ex);
+            }
+
         } catch (Exception ex) {
             System.err.println("Exception lors de l'ouverture du fichier : " + mSource + "Exception : " + ex);
         }
 
-        return null;
-    }
-
-    private Vector2i readHeader(Scanner fileScan) {
-        /*
-         Read the 'header' tag
-         */
-        fileScan.nextLine();
-
-        /*
-         Read the informations we want : width and height
-         First we've got the width, and then the height
-         */
-        fileScan.findInLine("width=");
-        int width = fileScan.nextInt();
-        fileScan.nextLine();
-        fileScan.findInLine("height=");
-        int height = fileScan.nextInt();
-
-        Vector2i dimensions = new Vector2i(width, height);
-
-        return dimensions;
-    }
-
-    private Layer readLayer(Scanner scan, Vector2i l_size) {
-
-        //scan.nextLine();
-        scan.findInLine("type=");
-        Map.Filter filtre = Map.getFilter(scan.nextLine());
-        if (filtre != null) {
-            Layer newLayer = new Layer(l_size.x, l_size.y, filtre);
-            scan.nextLine();
-            newLayer.readArray(scan);
-            return newLayer;
-        } else {
-            return null;
-        }
     }
 
     private final String mSource;

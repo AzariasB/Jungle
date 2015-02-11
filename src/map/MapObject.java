@@ -13,16 +13,18 @@ public class MapObject {
 
     /*
      Constructors
-    Some object don't have any proprieties, so instead of passing 'null' argument, you have nothing to do :
+     Some object don't have any proprieties, so instead of passing 'null' argument, you have nothing to do :
      */
     /**
-     *@param name : name of the object
-    * @param width : the width of the object
-    * @param height : the height of the object
-    * @param position : the position of the object in the map. Normally, it is two integers, by security and if it changes, it is better to take two float
-    */
-    public MapObject(String name, int width, int height, Vector2f position) {
-        mName = name;
+     * @param id : objects id
+     * @param width must be a multiple of 16 (to hold in a square)
+     * @param height must be a multiple of 16 (to hold in a square)
+     * @param position : the position of the object in the map. Normally, it is
+     * two integers, by security and if it changes, it is better to take two
+     * float
+     */
+    public MapObject(int id, int width, int height, Vector2f position) {
+        mId = id;
         mWidth = width;
         mHeight = height;
         mPosition = position;
@@ -30,20 +32,27 @@ public class MapObject {
     }
 
     /**
-     * 
+     *
+     * @param id : objects id (unic)
      * @param name : objects name
+     * @param type : some object can have a type ... for the moment, it's
+     * useless
      * @param width : objects width
      * @param height : objects height
      * @param position : objects position
-     * @param proprieties  : proprieties of the object : a standard is define for the proprieties's possible values
+     * @param proprieties : proprieties of the object : a standard is define for
+     * the proprieties's possible values
      */
-    public MapObject(String name, int width, int height, Vector2f position, java.util.Map<String, Integer> proprieties) {
+    public MapObject(String name, String type, int id, int width, int height, Vector2f position, java.util.Map<String, Object> proprieties) {
+        mId = id;
         mName = name;
+        mType = type;
         mWidth = width;
         mHeight = height;
         mPosition = position;
         mProprieties = proprieties;
     }
+
 
     /*
      Setters
@@ -56,7 +65,7 @@ public class MapObject {
         this.mPosition = newPosition;
     }
 
-    public void setProprieties(java.util.Map<String, Integer> proprieties) {
+    public void setProprieties(java.util.Map<String, Object> proprieties) {
         this.mProprieties = proprieties;
     }
 
@@ -66,6 +75,14 @@ public class MapObject {
 
     public void setHeight(int height) {
         this.mHeight = height;
+    }
+
+    public void setmType(String mType) {
+        this.mType = mType;
+    }
+
+    public void setmPosition(Vector2f mPosition) {
+        this.mPosition = mPosition;
     }
 
     /*
@@ -79,7 +96,7 @@ public class MapObject {
         return mPosition;
     }
 
-    public java.util.Map<String, Integer> getProprieties() {
+    public java.util.Map<String, Object> getProprieties() {
         return mProprieties;
     }
 
@@ -91,17 +108,27 @@ public class MapObject {
         return mHeight;
     }
 
-    public int getGriddpos() {
-        return griddpos;
+    public int getId() {
+        return mId;
+    }
+
+    public int getmRotation() {
+        return mRotation;
+    }
+
+    public String getType() {
+        return mType;
     }
 
     /*
-    Atributes :
-    */
-    private Vector2f mPosition;
+     Atributes :
+     */
     private int mWidth;
     private int mHeight;
-    private int griddpos;
+    private String mType;
     private String mName;
-    private java.util.Map<String, Integer> mProprieties;
+    private int mRotation;
+    private final int mId;
+    private Vector2f mPosition;
+    private java.util.Map<String, Object> mProprieties;
 }

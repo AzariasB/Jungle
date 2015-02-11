@@ -6,36 +6,18 @@ package map;
 import graphics.GraphicEngine;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.regex.Pattern;
 import org.jsfml.graphics.PrimitiveType;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
 
 public class Layer {
 
-    public Layer(int l_width, int l_height,Map.Filter myFilter) {
-        mLayer = new int[l_height][l_width];
+    public Layer(int[][] blockArray,Map.LayerType myFilter) {
+        mLayer = blockArray;
         mFilter = myFilter;
         mVerticies = new ArrayList<>();
     }
 
-    public void readArray(Scanner fToRead) {
-        fToRead.useDelimiter(Pattern.compile(",|\\s"));
-        for (int i = 0; i < mLayer.length; i++) {
-            for (int j = 0; j < mLayer[i].length; j++) {
-                //System.out.println("i = " + i + " j = " + j);
-                mLayer[i][j] = fToRead.nextInt();
-            }
-            if (i < mLayer.length - 1 ) {
-                //System.out.println("Avant");
-                fToRead.nextLine();
-                //System.out.println("Apres");
-            }
-            //System.out.println(i);
-        }
-        fToRead.useDelimiter(" ");
-    }
 
     public int[][] getArray() {
         return mLayer;
@@ -86,10 +68,10 @@ public class Layer {
     
     private final int mLayer[][];
     private List<Vertex[]> mVerticies;
-    private final Map.Filter mFilter;
+    private final Map.LayerType mFilter;
     private final int BUFFER_SIZE = 256;
 
-    Map.Filter getFilter() {
+    Map.LayerType getFilter() {
         return mFilter;
     }
 
