@@ -87,30 +87,73 @@ public class Map {
             int[][] myArray = lay.getArray();
             for (int y_arr = 0; y_arr < myArray.length; y_arr++) {
                 for (int x_arr = 0; x_arr < myArray[y_arr].length; x_arr++) {
+
                     int indexSp = myArray[y_arr][x_arr];
-                    if (indexSp > 0) {
-                        indexSp--;
+                    int XTextPos;
+                    int yTextPos;
+
+                    Vertex leftUpVertex;
+                    Vertex leftDownVertex;
+                    Vertex rightUpVertex;
+                    Vertex rightDownVertex;
+
+                    int luXincr = 0;
+                    int luYincr = 0;
+                    int ldXincr = 0;
+                    int ldYincr = 0;
+                    int rdXincr = 0;
+                    int rdYincr = 0;
+                    int ruXincr = 0;
+                    int ruYincr = 0;
+
+                    if (indexSp < 0) { // With Horizontal case
+                        indexSp = indexSp << 24;
+                        indexSp = Integer.reverseBytes(indexSp);
+
+                        luXincr = 1;
+                        ldXincr = 1;
+                        ldYincr = 1;
+                        rdYincr = 1;
+
+                    } else if (indexSp > LAST_TILESET) { // With vertical rotation case
+                        indexSp = indexSp << 24;
+                        indexSp = Integer.reverseBytes(indexSp);
+
+                        luYincr = 1;
+                        ruXincr = 1;
+                        ruYincr = 1;
+                        rdXincr = 1;
+
+                    } else { // Normal case
+                        ruXincr = 1;
+                        rdXincr = 1;
+                        rdYincr = 1;
+                        ldYincr = 1;
+
                     }
-                    int XTextPos = (indexSp % 64);
-                    int yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
+                    indexSp--;
+
+                    XTextPos = (indexSp % 64);
+                    yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
                     XTextPos *= TILE_SIZE;
 
-                    Vertex leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
-                            new Vector2f(XTextPos, yTextPos));
+                    leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
+                            new Vector2f(XTextPos + luXincr * TILE_SIZE, yTextPos + luYincr * TILE_SIZE));
 
-                    Vertex leftDownVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                            new Vector2f(XTextPos, yTextPos + TILE_SIZE));
+                    leftDownVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
+                            new Vector2f(XTextPos + ldXincr * TILE_SIZE, yTextPos + ldYincr * TILE_SIZE));
 
-                    Vertex rightUpVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, y_arr * TILE_SIZE),
-                            new Vector2f(XTextPos + TILE_SIZE, yTextPos));
+                    rightUpVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, y_arr * TILE_SIZE),
+                            new Vector2f(XTextPos + ruXincr * TILE_SIZE, yTextPos + ruYincr * TILE_SIZE));
 
-                    Vertex rightDownVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                            new Vector2f(XTextPos + TILE_SIZE, yTextPos + TILE_SIZE));
+                    rightDownVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
+                            new Vector2f(XTextPos + rdXincr * TILE_SIZE, yTextPos + rdYincr * TILE_SIZE));
 
                     verticies.add(leftUpVertex);
                     verticies.add(rightUpVertex);
                     verticies.add(rightDownVertex);
                     verticies.add(leftDownVertex);
+
                 }
             }
             lay.setVerticies(verticies);
@@ -125,16 +168,18 @@ public class Map {
 
     public static final int NB_FILTERS = 7;
     public static final int TILE_SIZE = 16;
+    public static final int LAST_TILESET = 8064;
 
     public enum LayerType {
 
         GROUND("Ground", 0),
         DECORATION("Decoration", 1),
-        COLLISION("Collision", 2),
-        DECO_COL("Deco_s_collision", 3),
-        FOREGROUND("Foreground", 4),
-        DECO_FG("Deco_s_fg", 5),
-        CLOUD("Cloud", 6);
+        QUITUE("QuiTue", 2),
+        COLLISION("Collision", 3),
+        DECO_COL("Deco_s_collision", 4),
+        FOREGROUND("Foreground", 5),
+        DECO_FG("Deco_s_fg", 6),
+        CLOUD("Cloud", 7);
 
         private LayerType(String name, int index) {
             mName = name;

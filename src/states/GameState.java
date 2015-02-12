@@ -61,7 +61,7 @@ public class GameState extends AbstractApplicationState {
         /*
         New Loading system : with loader class
         */
-        Loader ld = new Loader("maps.tmx", getGraphicEngine());         
+        Loader ld = new Loader("test1.tmx", getGraphicEngine());         
         myMap = ld.getMap();
 
         /*
