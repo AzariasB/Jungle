@@ -13,6 +13,7 @@ import components.SpriteAnimation;
 import components.Transformation;
 import components.Velocity;
 import entities.EntityFactory;
+import java.util.List;
 import map.Loader;
 import map.Map;
 import org.jsfml.audio.Music;
@@ -21,6 +22,7 @@ import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
+import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.AnimateSystem;
@@ -56,12 +58,12 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void initialize() {
-        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/test1.tmx");
+        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/maps.tmx");
 
         /*
         New Loading system : with loader class
         */
-        Loader ld = new Loader("test1.tmx", getGraphicEngine());         
+        Loader ld = new Loader("maps.tmx", getGraphicEngine());         
         myMap = ld.getMap();
 
         /*
@@ -78,7 +80,7 @@ public class GameState extends AbstractApplicationState {
         world.initialize();
         
         Entity player = world.createEntity();
-        player.addComponent(new Transformation(200, 400));
+        player.addComponent(new Transformation(myMap.getSpawnPoint().x,myMap.getSpawnPoint().y));
         player.addComponent(new Velocity());
         RenderableSprite playerRs = new RenderableSprite("joueur1.png");
         playerRs.setRect(new IntRect(0, 0, 32, 32));
@@ -90,10 +92,11 @@ public class GameState extends AbstractApplicationState {
         player.addToWorld();
 
         EntityFactory.createNoixCoco(world, 150, 350);
-
-        EntityFactory.createCoin(world, 300, 400);
-        EntityFactory.createCoin(world, 350, 400);
-        EntityFactory.createCoin(world, 250, 400);
+        
+        List<Vector2f> coins = myMap.getCoins();
+        for(int coin = 0; coin < coins.size();coin++){
+            EntityFactory.createCoin(world,(int)coins.get(coin).x , (int)coins.get(coin).y);
+        }
 
 
         GroupManager gm;

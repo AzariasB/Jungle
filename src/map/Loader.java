@@ -43,8 +43,8 @@ public class Loader {
 
         NodeList nl = docEle.getElementsByTagName("objectgroup");
         if (nl != null && nl.getLength() > 0) {
-
-            Element el = (Element) nl.item(1);
+           
+            Element el = (Element) nl.item(0);
             List<MapObject> mapObjts =  readObjects(el);
             mMap.setObjects(mapObjts);
         }
@@ -72,7 +72,7 @@ public class Loader {
             }
         }
 
-        return new ArrayList<>();
+        return theObjects;
     }
 
     private Layer readLayer(Node layers) {
@@ -195,7 +195,6 @@ public class Loader {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             try {
                 DocumentBuilder db = dbf.newDocumentBuilder();
-
                 Document dom = db.parse("assets/Maps/" + mSource);
                 parseDocument(dom);
 
@@ -204,7 +203,7 @@ public class Loader {
             }
 
         } catch (Exception ex) {
-            System.err.println("Exception lors de l'ouverture du fichier : " + mSource + "Exception : " + ex);
+            System.err.println("Exception lors de l'ouverture du fichier : " + mSource + " - Exception : " + ex);
         }
 
     }

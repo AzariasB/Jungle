@@ -25,6 +25,28 @@ public class Map {
         return mLayers;
     }
 
+    public Vector2f getSpawnPoint() {
+        int i;
+        for (i = 0; i < mObjects.size() && !"spawnpoint".equals(mObjects.get(i).getName().toLowerCase()); i++) {
+
+        }
+        if (mObjects.get(i).getName().toLowerCase().equals("spawnpoint")) {
+            return mObjects.get(i).getPosition();
+        } else {
+            return Vector2f.ZERO;
+        }
+    }
+
+    public List<Vector2f> getCoins() {
+        ArrayList<Vector2f> myCoins = new ArrayList<>() ;
+        for(int i = 0; i < mObjects.size();i++){
+            if(mObjects.get(i).getName().toLowerCase().equals("coin") ){
+                myCoins.add( mObjects.get(i).getPosition() );
+            }
+        }
+        return myCoins;
+    }
+
     public List<MapObject> getObject() {
         return mObjects;
     }
@@ -83,9 +105,9 @@ public class Map {
 
     /**
      * Function that takes the id of the grid and turn it into a vertex
-     * 
+     *
      * It takes care of the rotation of the tiles (horizontal && vertical)
-     * 
+     *
      */
     private void loadVertex() {
         ArrayList<Vertex> verticies = new ArrayList<>();
