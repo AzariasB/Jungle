@@ -81,6 +81,12 @@ public class Map {
         }
     }
 
+    /**
+     * Function that takes the id of the grid and turn it into a vertex
+     * 
+     * It takes care of the rotation of the tiles (horizontal && vertical)
+     * 
+     */
     private void loadVertex() {
         ArrayList<Vertex> verticies = new ArrayList<>();
         for (Layer lay : mLayers) {
