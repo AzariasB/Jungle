@@ -1,6 +1,7 @@
 package states;
 
 import architecture.AbstractApplicationState;
+import architecture.AppStateEnum;
 import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
@@ -14,6 +15,7 @@ import components.Transformation;
 import components.Velocity;
 import entities.EntityFactory;
 import java.util.List;
+import louveteau.Main;
 import map.Loader;
 import map.Map;
 import org.jsfml.audio.Music;
@@ -40,8 +42,9 @@ public class GameState extends AbstractApplicationState {
 
     private PlayerControlSystem mPlayerControlSystem;
 
-    public GameState(int id) {
-        super(id);
+    @Override
+    public AppStateEnum getStateId() {
+        return Main.MyStates.GAMESTATE;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class GameState extends AbstractApplicationState {
         /*
         New Loading system : with loader class
         */
-        Loader ld = new Loader("maps.tmx", getGraphicEngine());         
+        Loader ld = new Loader(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
         myMap = ld.getMap();
 
         /*
@@ -78,6 +81,10 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
         world.initialize();
+
+        EntityFactory.createCoin(world, 300, 400);
+        EntityFactory.createCoin(world, 350, 400);
+        EntityFactory.createCoin(world, 250, 400);
         
         Entity player = world.createEntity();
         player.addComponent(new Transformation(myMap.getSpawnPoint().x,myMap.getSpawnPoint().y));
@@ -92,6 +99,7 @@ public class GameState extends AbstractApplicationState {
         player.addToWorld();
 
         EntityFactory.createNoixCoco(world, 150, 350);
+
         
         List<Vector2f> coins = myMap.getCoins();
         for(int coin = 0; coin < coins.size();coin++){

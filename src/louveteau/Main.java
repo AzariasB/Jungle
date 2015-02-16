@@ -5,6 +5,7 @@
  */
 package louveteau;
 
+import architecture.AppStateEnum;
 import architecture.Application;
 import states.GameState;
 import states.MainMenuState;
@@ -15,9 +16,13 @@ import states.SplashScreenState;
  */
 public class Main {
 
-    public static final int SPLASHSCREENSTATE = 0;
-    public static final int MAINMENUSTATE = 1;
-    public static final int GAMESTATE = 2;
+    public enum MyStates implements AppStateEnum {
+
+        SPLASHSCREENSTATE,
+        MAINMENUSTATE,
+        GAMESTATE;
+
+    }
 
     /**
      * @param args the command line arguments
@@ -27,10 +32,10 @@ public class Main {
         Application app = new Application("Louveteau", args);
         app.setDisplayMode(800, 600, false);
 
-        app.addState(new SplashScreenState(SPLASHSCREENSTATE));
-        app.addState(new MainMenuState(MAINMENUSTATE));
-        app.addState(new GameState(GAMESTATE));
-        app.setStartingState(GAMESTATE);
+        app.addState(new SplashScreenState());
+        app.addState(new MainMenuState());
+        app.addState(new GameState());
+        app.setStartingState(MyStates.GAMESTATE);
 
         app.run();
     }

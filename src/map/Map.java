@@ -30,7 +30,7 @@ public class Map {
         for (i = 0; i < mObjects.size() && !"spawnpoint".equals(mObjects.get(i).getName().toLowerCase()); i++) {
 
         }
-        if (mObjects.get(i).getName().toLowerCase().equals("spawnpoint")) {
+        if (i < mObjects.size() && mObjects.get(i).getName().toLowerCase().equals("spawnpoint")) {
             return mObjects.get(i).getPosition();
         } else {
             return Vector2f.ZERO;

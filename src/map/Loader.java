@@ -195,7 +195,7 @@ public class Loader {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             try {
                 DocumentBuilder db = dbf.newDocumentBuilder();
-                Document dom = db.parse("assets/Maps/" + mSource);
+                Document dom = db.parse(mSource);
                 parseDocument(dom);
 
             } catch (ParserConfigurationException | SAXException | IOException ex) {

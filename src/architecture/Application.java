@@ -19,6 +19,7 @@ import sounds.MusicEngine;
 public final class Application implements AppContent {
     private final ApplicationOptions mOptions;
 
+
     public Application(String name, String[] args) {
         mStates = new StateManager(this);
         mOptions = new ApplicationOptions(args);
@@ -35,13 +36,13 @@ public final class Application implements AppContent {
         mStates.addState(state);
     }
 
-    public void setStartingState(int id) {
-        mStates.setStartingState(id);
+    public void setStartingState(AppStateEnum id) {
+        mStates.setStartingState(id.name());
     }
 
     @Override
-    public void goToState(int stateId) {
-        mStates.goToState(stateId);
+    public void goToState(AppStateEnum stateId) {
+        mStates.goToState(stateId.name());
     }
 
     @Override

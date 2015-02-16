@@ -24,12 +24,12 @@ public class StateManager {
     void addState(AbstractApplicationState state) {
         Validate.notNull(state);
         state.setApplication(mApplication);
-        int id = state.getId();
+        AppStateEnum id = state.getStateId();
         Validate.isTrue(!mStates.containsKey(id), "The state's id already belongs to a previous added state.");
-        mStates.put(id, state);
+        mStates.put(id.name(), state);
     }
 
-    void setStartingState(int id) {
+    void setStartingState(String id) {
         mCurrentState = mStates.get(id);
     }
 
@@ -45,7 +45,7 @@ public class StateManager {
         return mCurrentState;
     }
 
-    void goToState(int stateId) {
+    void goToState(String stateId) {
         Validate.isTrue(mStates.containsKey(stateId), "This state id has no associated state. Forgot to add the state ?");
         if (mCurrentState != null) {
             mCurrentState.notifyExiting();
@@ -54,6 +54,6 @@ public class StateManager {
         mCurrentState.notifyEntering();
     }
 
-    private Map<Integer, AbstractApplicationState> mStates;
+    private Map<String, AbstractApplicationState> mStates;
     private AbstractApplicationState mCurrentState;
 }
