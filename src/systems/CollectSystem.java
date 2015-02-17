@@ -50,6 +50,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
                         hm.get(collector),
                         tm.get(collectable),
                         hm.get(collectable))) {
+
                     collectable.deleteFromWorld();
                     mAppContent.getMusicEngine().getSound("coin.wav").play();
                 }
