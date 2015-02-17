@@ -31,7 +31,7 @@ public class SpriteAnimation extends Component {
         mLoop = loop;
         mStartX = startX;
         mElapsedTime = 0;
-        mIndex = nbFrames + 1;
+        mIndex = 1;
         mPlaying = true;
     }
 

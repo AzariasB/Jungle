@@ -10,15 +10,10 @@ import org.jsfml.window.event.Event;
  */
 public abstract class AbstractApplicationState {
 
-    private final int mId;
-
-    public AbstractApplicationState(int id) {
-        mId = id;
+    public AbstractApplicationState() {
     }
 
-    public final int getId() {
-        return mId;
-    }
+    public abstract AppStateEnum getStateId();
 
     public void initialize() {
     }

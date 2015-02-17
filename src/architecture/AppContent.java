@@ -13,7 +13,7 @@ import sounds.MusicEngine;
  */
 public interface AppContent {
 
-    public void goToState(int stateId);
+    public void goToState(AppStateEnum stateId);
 
     public void exit();
 
