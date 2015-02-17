@@ -106,6 +106,33 @@ public class GameState extends AbstractApplicationState {
                 case R:
                     initialize();
                     break;
+                case UP:
+                    mPlayerControlSystem.goUp();
+                    break;
+                case LEFT:
+                    mPlayerControlSystem.goLeft();
+                    break;
+                case DOWN:
+                    mPlayerControlSystem.goDown();
+                    break;
+                case RIGHT:
+                    mPlayerControlSystem.goRight();
+                    break;
+            }
+        } else if (e.type == Event.Type.KEY_RELEASED) {
+            switch (e.asKeyEvent().key) {
+                case UP:
+                    mPlayerControlSystem.stopUp();
+                    break;
+                case LEFT:
+                    mPlayerControlSystem.stopLeft();
+                    break;
+                case DOWN:
+                    mPlayerControlSystem.stopDown();
+                    break;
+                case RIGHT:
+                    mPlayerControlSystem.stopRight();
+                    break;
             }
         }
     }
