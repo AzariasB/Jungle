@@ -19,6 +19,7 @@ public class Map {
         mLayers = new ArrayList<>();
         mObjects = new ArrayList<>();
         mTexture = g_eng.getTexture("tiles.png");
+        mEmptyLayer = (int xi, int yi) -> false;
     }
 
     public List<Layer> getLayers() {
@@ -83,30 +84,33 @@ public class Map {
         int _ex = (_x + _w - 1) / TILE_SIZE;
         int _ey = (_y + _h - 1) / TILE_SIZE;
 
-        if (LayerType.COLLISION.getIndex() < mLayers.size()) {
-            Layer lay = mLayers.get(LayerType.COLLISION.getIndex());
+        TileTest lay = getCollisionLayer();
 
             for (int _iy = _sy; _iy <= _ey; _iy++) {
                 for (int _ix = _sx; _ix <= _ex; _ix++) {
-                    if (lay.blockExists(_ix, _iy)) {
+                    if (lay.tileExists(_ix, _iy)) {
                         return true;
                     }
                 }
             }
-        }
+        
         return false;
     }
 
+    private TileTest getCollisionLayer() {
+        if (LayerType.COLLISION.getIndex() < mLayers.size()) {
+            return mLayers.get(LayerType.COLLISION.getIndex());
+        }
+        return mEmptyLayer;
+    }
+
     public List<Vector2i> computePath(float startX, float startY, float toX, float toY) {
-        int sx = (int) startX;
-        int sy = (int) startY;
-        int tx = (int) toX;
-        int ty = (int) toY;
+        int sx = ((int) startX) / TILE_SIZE;
+        int sy = ((int) startY) / TILE_SIZE;
+        int tx = ((int) toX) / TILE_SIZE;
+        int ty = ((int) toY) / TILE_SIZE;
 
-        List<Vector2i> path = new ArrayList<>();
-
-        return path;
-
+        return PathFinding.compute(getCollisionLayer(), sx, sy, tx, ty);
     }
 
     public void render(GraphicEngine drawInIt) {
@@ -203,6 +207,7 @@ public class Map {
 
     }
 
+    private TileTest mEmptyLayer;
     private List<Layer> mLayers;
     private List<MapObject> mObjects;
     private final ConstTexture mTexture;

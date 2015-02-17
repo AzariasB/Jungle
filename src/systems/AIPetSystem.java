@@ -10,7 +10,11 @@ import com.artemis.systems.EntityProcessingSystem;
 import components.AIPetComponent;
 import components.Transformation;
 import components.Velocity;
+import java.util.List;
+import map.Map;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
+import systems.helpers.DistanceHelper;
 
 /**
  *
@@ -27,13 +31,15 @@ public class AIPetSystem extends EntityProcessingSystem {
     ComponentMapper<Transformation> tm;
 
     private Vector2f playerPos;
+    private final Map mMap;
 
     @SuppressWarnings("unchecked")
-    public AIPetSystem() {
+    public AIPetSystem(Map map) {
         super(Aspect.getAspectForAll(
                 AIPetComponent.class,
                 Velocity.class,
                 Transformation.class));
+        mMap = map;
     }
 
     @Override
@@ -56,7 +62,32 @@ public class AIPetSystem extends EntityProcessingSystem {
         int currentState = petCmpt.getState();
 
         switch (currentState) {
-            case 0: // Search Player
+            case 0: // Compute path to player
+                List<Vector2i> path = mMap.computePath(pos.x, pos.y, playerPos.x, playerPos.y);
+                petCmpt.setPath(path);
+                petCmpt.setState(1);
+                break;
+
+            case 1: // Move to next tile
+                if (petCmpt.getPathIterator().hasNext()) {
+                    Vector2f next = new Vector2f(petCmpt.getPathIterator().next());
+                    petCmpt.setGoal(next);
+                    Vector2f diff = Vector2f.sub(next, pos);
+                    vel.setVelocity(diff);
+                    petCmpt.setState(2);
+                } else {
+                    petCmpt.setState(0);
+                }
+                break;
+
+            case 2: // Test if goal was reached
+                if (DistanceHelper.distance(pos, petCmpt.getGoal()) < 10) {
+                    petCmpt.setState(1);
+                }
+                break;
+
+
+            case 100: // Search Player
                 int x = (int) (pos.x - playerPos.x);
                 int y = (int) (pos.y - playerPos.y);
 
@@ -65,7 +96,7 @@ public class AIPetSystem extends EntityProcessingSystem {
                 }
                 break;
 
-            case 1: // Follow player
+            case 101: // Follow player
                 x = (int) (pos.x - playerPos.x);
                 y = (int) (pos.y - playerPos.y);
 

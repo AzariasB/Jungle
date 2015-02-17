@@ -77,7 +77,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
-        world.setSystem(new AIPetSystem());
+        world.setSystem(new AIPetSystem(myMap));
 
 
         EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);

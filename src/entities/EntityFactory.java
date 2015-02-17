@@ -7,7 +7,6 @@ import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import components.Collector;
-import components.AIPetComponent;
 import components.CollideWithMap;
 import components.HitBox;
 import components.Player;
@@ -73,7 +72,7 @@ public class EntityFactory {
         pet.addComponent(new SpriteAnimation(4, 500, true));
         pet.addComponent(new HitBox(new FloatRect(0, 5, 24, 16)));
         pet.addComponent(new CollideWithMap());
-        pet.addComponent(new AIPetComponent());
+        //pet.addComponent(new AIPetComponent());
         pet.addToWorld();
     }
 
