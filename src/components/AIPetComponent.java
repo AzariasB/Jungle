@@ -5,7 +5,6 @@ import com.artemis.Component;
 import java.util.Iterator;
 import java.util.List;
 import org.jsfml.system.Vector2f;
-import org.jsfml.system.Vector2i;
 
 /**
  *
@@ -13,9 +12,10 @@ import org.jsfml.system.Vector2i;
 public class AIPetComponent extends Component {
 
     private int mState;
-    private List<Vector2i> mPath;
-    private Iterator<Vector2i> mPit;
+    private List<Vector2f> mPath;
+    private Iterator<Vector2f> mPit;
     private Vector2f mGoal;
+    private Vector2f mOldPlayerPos;
 
     public int getState() {
         return mState;
@@ -25,12 +25,12 @@ public class AIPetComponent extends Component {
         this.mState = state;
     }
 
-    public void setPath(List<Vector2i> path) {
+    public void setPath(List<Vector2f> path) {
         mPath = path;
         mPit = path.iterator();
     }
 
-    public Iterator<Vector2i> getPathIterator() {
+    public Iterator<Vector2f> getPathIterator() {
         return mPit;
     }
 
@@ -40,6 +40,14 @@ public class AIPetComponent extends Component {
 
     public Vector2f getGoal() {
         return mGoal;
+    }
+
+    public void setOldPlayerPos(Vector2f playerPos) {
+        mOldPlayerPos = playerPos;
+    }
+
+    public Vector2f getOldPlayerPos() {
+        return mOldPlayerPos;
     }
 
 }

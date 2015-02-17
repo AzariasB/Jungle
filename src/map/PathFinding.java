@@ -1,6 +1,6 @@
-
 package map;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,37 +12,29 @@ import org.jsfml.system.Vector2i;
  *
  */
 public class PathFinding {
+
     private static final Vector2i[] DIRECTIONS
             = {new Vector2i(1, 0), new Vector2i(0, 1), new Vector2i(-1, 0),
                 new Vector2i(0, -1)};
 
-    static List<Vector2i> compute(TileTest lay, int sx, int sy, int tx, int ty) {
-        return concreteFindPath(lay, new Vector2i(sx, sy), new Vector2i(tx, ty));
-    }
-
-
-  
-
     /**
-     * Class which contains data to be associate to Vector2i
+     *
+     * @param lay
+     * @param sx Start x index
+     * @param sy
+     * @param tx Destination x index
+     * @param ty
+     * @return if destination is not reachable, return an empty path
      */
-    private class MetaData {
+    static List<Vector2i> compute(TileTest collisionLayer, int sx, int sy, int tx, int ty,
+            int w, int h) {
 
-        Vector2i previous;
-
-        public MetaData() {
-            super();
-            this.previous = null;
+        if (isColliding(collisionLayer, new Vector2i(tx, ty), w, h)) {
+            return new ArrayList<>(0);
         }
 
-        public MetaData(Vector2i parent) {
-            previous = parent;
-            this.previous = parent;
-        }
-    };
-
-    private static List<Vector2i> concreteFindPath(TileTest collisionLayer, Vector2i source,
-            Vector2i destination) {
+        Vector2i source = new Vector2i(sx, sy);
+        Vector2i destination = new Vector2i(tx, ty);
 
         /*
          * 1) Add the starting square (or node) to the open list.
@@ -80,7 +72,7 @@ public class PathFinding {
          */
         Set<Vector2i> openSet = new HashSet<>();
         Set<Vector2i> closedSet = new HashSet<>();
-		// permit to only associate data to visited tile
+        // permit to only associate data to visited tile
         // and so, avoid to initialize all tiles.
         java.util.Map<Vector2i, Vector2i> metaData = new HashMap<>();
 
@@ -116,7 +108,7 @@ public class PathFinding {
             openSet.remove(current);
             closedSet.add(current);
 
-            if (current == destination) {
+            if (current.equals(destination)) {
                 break;
             }
 
@@ -139,19 +131,18 @@ public class PathFinding {
             for (Vector2i d : DIRECTIONS) {
                 Vector2i adjacent = Vector2i.add(current, d);
 
-                if (collisionLayer.tileExists(adjacent.x, adjacent.y)) {
-                    continue;
-                }
-
                 if (closedSet.contains(adjacent)) {
                     continue;
                 }
 
-                if (openSet.add(adjacent)) { // newly added
-                    metaData.put(adjacent, current);
-                } else { //  already added
-                    metaData.put(adjacent, current);
+                /* Test collisions */
+                if (isColliding(collisionLayer, adjacent, w, h)) {
+                    closedSet.add(adjacent);
+                    continue;
                 }
+
+                openSet.add(adjacent);
+                metaData.put(adjacent, current);
             }
         }
 
@@ -174,6 +165,20 @@ public class PathFinding {
         }
 
         return path;
+    }
+
+    private static boolean isColliding(TileTest collisionLayer, Vector2i adjacent, int w, int h) {
+        boolean ok = true;
+        int _ey = adjacent.y + h;
+        int _ex = adjacent.x + w;
+        for (int _iy = adjacent.y; _iy <= _ey; _iy++) {
+            for (int _ix = adjacent.x; _ix <= _ex; _ix++) {
+                if (collisionLayer.tileExists(_ix, _iy)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static int computeDistance(Vector2i a, Vector2i b) {

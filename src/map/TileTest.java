@@ -17,4 +17,5 @@ interface TileTest {
      * @return if there is a tile
      */
     boolean tileExists(int xi, int yi);
+
 }

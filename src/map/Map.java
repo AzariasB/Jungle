@@ -86,14 +86,14 @@ public class Map {
 
         TileTest lay = getCollisionLayer();
 
-            for (int _iy = _sy; _iy <= _ey; _iy++) {
-                for (int _ix = _sx; _ix <= _ex; _ix++) {
-                    if (lay.tileExists(_ix, _iy)) {
-                        return true;
-                    }
+        for (int _iy = _sy; _iy <= _ey; _iy++) {
+            for (int _ix = _sx; _ix <= _ex; _ix++) {
+                if (lay.tileExists(_ix, _iy)) {
+                    return true;
                 }
             }
-        
+        }
+
         return false;
     }
 
@@ -104,13 +104,23 @@ public class Map {
         return mEmptyLayer;
     }
 
-    public List<Vector2i> computePath(float startX, float startY, float toX, float toY) {
+    public List<Vector2f> computePath(float startX, float startY, float toX, float toY,
+            float width, float height) {
         int sx = ((int) startX) / TILE_SIZE;
         int sy = ((int) startY) / TILE_SIZE;
         int tx = ((int) toX) / TILE_SIZE;
         int ty = ((int) toY) / TILE_SIZE;
+        int w = ((int) width + TILE_SIZE - 1) / TILE_SIZE;
+        int h = ((int) height + TILE_SIZE - 1) / TILE_SIZE;
 
-        return PathFinding.compute(getCollisionLayer(), sx, sy, tx, ty);
+        List<Vector2i> indexPath = PathFinding.compute(getCollisionLayer(), sx, sy, tx, ty, w, h);
+        List<Vector2f> path = new ArrayList<>(indexPath.size());
+
+        for (Vector2i ic : indexPath) {
+            path.add(new Vector2f(ic.x * TILE_SIZE, ic.y * TILE_SIZE));
+        }
+
+        return path;
     }
 
     public void render(GraphicEngine drawInIt) {
