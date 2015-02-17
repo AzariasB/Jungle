@@ -8,11 +8,10 @@ import com.artemis.annotations.Mapper;
 import com.artemis.managers.GroupManager;
 import com.artemis.systems.IntervalEntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
-import components.Collectable;
+import components.Collector;
 import components.HitBox;
 import components.Transformation;
-import org.jsfml.graphics.FloatRect;
-import org.jsfml.system.Vector2f;
+import systems.helpers.CollisionHelper;
 
 /**
  *
@@ -20,7 +19,7 @@ import org.jsfml.system.Vector2f;
 public class CollectSystem extends IntervalEntityProcessingSystem {
 
     @Mapper
-    ComponentMapper<Transformation> pm;
+    ComponentMapper<Transformation> tm;
 
     @Mapper
     ComponentMapper<HitBox> hm;
@@ -30,7 +29,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
     @SuppressWarnings("unchecked")
     public CollectSystem(AppContent application) {
         super(Aspect.getAspectForAll(
-                Collectable.class,
+                Collector.class,
                 Transformation.class,
                 HitBox.class
         ), 0.01f);
@@ -38,24 +37,19 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
     }
 
     @Override
-    protected void process(Entity entity) {
+    protected void process(Entity collector) {
         GroupManager gm = world.getManager(GroupManager.class);
 
-        ImmutableBag<Entity> collectors = gm.getEntities("COLLECTORS");
+        ImmutableBag<Entity> collectables = gm.getEntities("COLLECTABLE");
 
-        for (int i = 0, s = collectors.size(); i < s; ++i) {
-            Entity collector = collectors.get(i);
-            if (pm.has(collector) && hm.has(entity)) {
+        for (int i = 0, s = collectables.size(); i < s; ++i) {
+            Entity collectable = collectables.get(i);
+            if (tm.has(collectable) && hm.has(collector)) {
 
-                Vector2f collectorPos = pm.get(collector).getTransformable().getPosition();
-                FloatRect orHitbox = hm.get(collector).moveCopy(collectorPos);
-                
-                Entity collectable = entity;
-
-                Vector2f collectablePos = pm.get(collectable).getTransformable().getPosition();
-                FloatRect ableHitbox = hm.get(collectable).moveCopy(collectablePos);
-                
-                if (orHitbox.intersection(ableHitbox) != null) {
+                if (CollisionHelper.isHitting(tm.get(collector),
+                        hm.get(collector),
+                        tm.get(collectable),
+                        hm.get(collectable))) {
                     collectable.deleteFromWorld();
                     mAppContent.getMusicEngine().getSound("coin.wav").play();
                 }
