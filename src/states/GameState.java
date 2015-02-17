@@ -18,6 +18,7 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
+import systems.AIPetSystem;
 import systems.AnimateSystem;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
@@ -63,13 +64,12 @@ public class GameState extends AbstractApplicationState {
         /*
          World entities creation
          */
+
         world = new World();
-        GroupManager gm = new GroupManager();
-        world.setManager(gm);
-        TagManager tm = new TagManager();
-        world.setManager(tm);
-        TeamManager tem = new TeamManager();
-        world.setManager(tem);
+        world.setManager(new GroupManager());
+        world.setManager(new TagManager());
+        world.setManager(new TeamManager());
+
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
@@ -77,18 +77,23 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
+        world.setSystem(new AIPetSystem());
+
 
         EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
+        /* Collectables */
         EntityFactory.createNoixCoco(world, 150, 350);
         EntityFactory.createCoin(world, 300, 400);
         EntityFactory.createCoin(world, 350, 400);
         EntityFactory.createCoin(world, 250, 400);
-
         List<Vector2f> coins = myMap.getCoins();
         for(int coin = 0; coin < coins.size();coin++){
             EntityFactory.createCoin(world,(int)coins.get(coin).x , (int)coins.get(coin).y);
         }
+
+        EntityFactory.createPet(world, 50, 50);
+
 
         world.initialize(); 
     }

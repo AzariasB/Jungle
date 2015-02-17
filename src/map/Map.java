@@ -12,6 +12,7 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
 import org.jsfml.graphics.VertexArray;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 public class Map {
 
@@ -94,6 +95,18 @@ public class Map {
             }
         }
         return false;
+    }
+
+    public List<Vector2i> computePath(float startX, float startY, float toX, float toY) {
+        int sx = (int) startX;
+        int sy = (int) startY;
+        int tx = (int) toX;
+        int ty = (int) toY;
+
+        List<Vector2i> path = new ArrayList<>();
+
+        return path;
+
     }
 
     public void render(GraphicEngine drawInIt) {
