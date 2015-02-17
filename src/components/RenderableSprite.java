@@ -15,9 +15,16 @@ public class RenderableSprite extends Component {
     private IntRect mRect;
     private final String mTexName;
 
-    public RenderableSprite(String textureName) {
+    public RenderableSprite(String textureName, IntRect rect) {
         mTexName = textureName;
+        mRect = rect;
     }
+
+    public RenderableSprite(String textureName) {
+        this(textureName, null);
+    }
+
+    
 
     public void setTexture(ConstTexture tex) {
         mTexture = tex;

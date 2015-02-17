@@ -10,7 +10,7 @@ import org.jsfml.graphics.PrimitiveType;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
 
-public class Layer {
+public class Layer implements TileTest {
 
     public Layer(int[][] blockArray,Map.LayerType myFilter) {
         mLayer = blockArray;
@@ -56,7 +56,8 @@ public class Layer {
         }
     }
     
-    public boolean blockExists(int x_index, int y_index) {
+    @Override
+    public boolean tileExists(int x_index, int y_index) {
         // TODO : remove when we are sure our player is
         // always into the map.
         if (0 <= y_index && y_index < mLayer.length
