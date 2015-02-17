@@ -48,7 +48,7 @@ public class PlayerControlSystem extends EntityProcessingSystem {
         mForces = new ArrayDeque<>(4);
     }
 
-    private final float VELOCITY = 100;
+    private final float VELOCITY = 500;
 
     @Override
     protected void process(Entity entity) {
