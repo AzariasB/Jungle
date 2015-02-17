@@ -98,8 +98,15 @@ public class Map {
 
     public void render(GraphicEngine drawInIt) {
         RenderStates render = new RenderStates(mTexture);
-        for (Layer lay : mLayers) {
-            lay.drawYourSelf(drawInIt, render);
+        for (int i = 0 ; i < LayerType.FOREGROUND.Index();i++) {
+            mLayers.get(i).drawYourSelf(drawInIt, render);
+        }
+    }
+    
+    public void renderFg(GraphicEngine drawInThat){
+        RenderStates render = new RenderStates(mTexture);
+        for(int i = LayerType.FOREGROUND.Index(); i < mLayers.size();i++){
+            mLayers.get(i).drawYourSelf(drawInThat, render);
         }
     }
 

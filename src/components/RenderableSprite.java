@@ -13,7 +13,7 @@ public class RenderableSprite extends Component {
 
     private ConstTexture mTexture;
     private IntRect mRect;
-    private String mTexName;
+    private final String mTexName;
 
     public RenderableSprite(String textureName) {
         mTexName = textureName;

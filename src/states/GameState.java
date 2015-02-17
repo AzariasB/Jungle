@@ -48,7 +48,7 @@ public class GameState extends AbstractApplicationState {
     public void notifyEntering() {
         MusicEngine mesMusiques = getAppContent().getMusicEngine();
         gameMusic = mesMusiques.getMusic("happy.ogg");
-        //gameMusic.play();
+        gameMusic.play();
     }
 
     @Override
@@ -142,7 +142,8 @@ public class GameState extends AbstractApplicationState {
         myMap.render(getGraphicEngine());
 
         mRenderingSystem.process();
-        // TODO : draw HUD
+        myMap.renderFg(getGraphicEngine());
+        // TODO : draw HUD && text if any
 
         mDebugRenderingSystem.process();
         
