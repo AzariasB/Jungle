@@ -10,7 +10,6 @@ import java.util.List;
 import org.jsfml.graphics.ConstTexture;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
-import org.jsfml.graphics.VertexArray;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
@@ -39,10 +38,10 @@ public class Map {
     }
 
     public List<Vector2f> getCoins() {
-        ArrayList<Vector2f> myCoins = new ArrayList<>() ;
-        for(int i = 0; i < mObjects.size();i++){
-            if(mObjects.get(i).getName().toLowerCase().equals("coin") ){
-                myCoins.add( mObjects.get(i).getPosition() );
+        ArrayList<Vector2f> myCoins = new ArrayList<>();
+        for (int i = 0; i < mObjects.size(); i++) {
+            if (mObjects.get(i).getName().toLowerCase().equals("coin")) {
+                myCoins.add(mObjects.get(i).getPosition());
             }
         }
         return myCoins;
@@ -63,9 +62,9 @@ public class Map {
 
     public void displayMap() {
         for (LayerType fil : LayerType.values()) {
-            System.out.println(fil.Name() + "==============");
-            if (mLayers.get(fil.Index()) != null) {
-                System.out.println(Arrays.deepToString(mLayers.get(fil.Index()).getArray()));
+            System.out.println(fil.getName() + "==============");
+            if (mLayers.get(fil.getIndex()) != null) {
+                System.out.println(Arrays.deepToString(mLayers.get(fil.getIndex()).getArray()));
             }
 
         }
@@ -84,10 +83,11 @@ public class Map {
         int _ex = (_x + _w - 1) / TILE_SIZE;
         int _ey = (_y + _h - 1) / TILE_SIZE;
 
-        for (int _iy = _sy; _iy <= _ey; _iy++) {
-            for (int _ix = _sx; _ix <= _ex; _ix++) {
-                if (mLayers.size() >= LayerType.COLLISION.Index()) {
-                    Layer lay = mLayers.get(LayerType.COLLISION.Index());
+        if (LayerType.COLLISION.getIndex() < mLayers.size()) {
+            Layer lay = mLayers.get(LayerType.COLLISION.getIndex());
+
+            for (int _iy = _sy; _iy <= _ey; _iy++) {
+                for (int _ix = _sx; _ix <= _ex; _ix++) {
                     if (lay.blockExists(_ix, _iy)) {
                         return true;
                     }
@@ -227,18 +227,16 @@ public class Map {
             mIndex = index;
         }
 
-        public String Name() {
+        public String getName() {
             return mName;
         }
 
-        public int Index() {
+        public int getIndex() {
             return mIndex;
         }
 
         private final String mName;
         private final int mIndex;
-        private VertexArray mVertexs;
-
     }
 
 }
