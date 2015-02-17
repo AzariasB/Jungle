@@ -2,17 +2,10 @@ package states;
 
 import architecture.AbstractApplicationState;
 import architecture.AppStateEnum;
-import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
-import components.CollideWithMap;
-import components.HitBox;
-import components.Player;
-import components.RenderableSprite;
-import components.SpriteAnimation;
-import components.Transformation;
-import components.Velocity;
+import com.artemis.managers.TeamManager;
 import entities.EntityFactory;
 import java.util.List;
 import louveteau.Main;
@@ -20,8 +13,6 @@ import map.Loader;
 import map.Map;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
-import org.jsfml.graphics.FloatRect;
-import org.jsfml.graphics.IntRect;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
@@ -73,6 +64,12 @@ public class GameState extends AbstractApplicationState {
          World entities creation
          */
         world = new World();
+        GroupManager gm = new GroupManager();
+        world.setManager(gm);
+        TagManager tm = new TagManager();
+        world.setManager(tm);
+        TeamManager tem = new TeamManager();
+        world.setManager(tem);
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
@@ -80,40 +77,18 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
-        world.initialize();
 
+        EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
+
+        EntityFactory.createNoixCoco(world, 150, 350);
         EntityFactory.createCoin(world, 300, 400);
         EntityFactory.createCoin(world, 350, 400);
         EntityFactory.createCoin(world, 250, 400);
-        
-        Entity player = world.createEntity();
-        player.addComponent(new Transformation(myMap.getSpawnPoint().x,myMap.getSpawnPoint().y));
-        player.addComponent(new Velocity());
-        RenderableSprite playerRs = new RenderableSprite("joueur1.png");
-        playerRs.setRect(new IntRect(0, 0, 32, 32));
-        player.addComponent(playerRs);
-        player.addComponent(new SpriteAnimation(3, 500, true));
-        player.addComponent(new HitBox(new FloatRect(6, 16, 20, 16)));
-        player.addComponent(new CollideWithMap());
-        player.addComponent(new Player());
-        player.addToWorld();
 
-        EntityFactory.createNoixCoco(world, 150, 350);
-
-        
         List<Vector2f> coins = myMap.getCoins();
         for(int coin = 0; coin < coins.size();coin++){
             EntityFactory.createCoin(world,(int)coins.get(coin).x , (int)coins.get(coin).y);
         }
-
-
-        GroupManager gm;
-        world.setManager(gm = new GroupManager());
-        gm.add(player, "COLLECTORS");
-
-        TagManager tm;
-        world.setManager(tm = new TagManager());
-        tm.register("PLAYER", player);
 
         world.initialize(); 
     }
