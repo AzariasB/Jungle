@@ -25,7 +25,7 @@ import systems.DebugRenderingSystem;
 import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
 import systems.PlayerControlSystem;
-import systems.RenderingSystem;
+import systems.RenderingSpriteSystem;
 
 /**
  *
@@ -74,7 +74,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
         world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
-        world.setSystem(mRenderingSystem = new RenderingSystem(getGraphicEngine()), true);
+        world.setSystem(mRenderingSystem = new RenderingSpriteSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
         world.setSystem(new AIPetSystem(myMap));
@@ -167,7 +167,7 @@ public class GameState extends AbstractApplicationState {
     private Music gameMusic;
 
     private World world;
-    private RenderingSystem mRenderingSystem;
+    private RenderingSpriteSystem mRenderingSystem;
     private DebugRenderingSystem mDebugRenderingSystem;
     private Map myMap;
 
