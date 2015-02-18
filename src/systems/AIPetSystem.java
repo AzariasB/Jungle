@@ -87,8 +87,8 @@ public class AIPetSystem extends EntityProcessingSystem {
                         pos.y,
                         playerPos.x,
                         playerPos.y,
-                        hitbox.width,
-                        hitbox.height);
+                        hitbox.width + hitbox.left,
+                        hitbox.height + hitbox.top);
                 petCmpt.setOldPlayerPos(playerPos);
                 petCmpt.setPath(path);
                 petCmpt.setState(1);
