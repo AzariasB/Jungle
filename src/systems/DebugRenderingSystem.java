@@ -9,6 +9,7 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
+import components.AIMonsterComponent;
 import components.AIPetComponent;
 import components.HitBox;
 import components.Transformation;
@@ -35,6 +36,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
     ComponentMapper<HitBox> hitboxm;
     @Mapper
     ComponentMapper<AIPetComponent> aipetm;
+    @Mapper
+    ComponentMapper<AIMonsterComponent> monsterm;
 
     private final GraphicEngine mGraphicEngine;
     private Text mTmpText;
@@ -147,7 +150,7 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
         if (aipetm.has(entity)) {
             AIPetComponent aipet = aipetm.get(entity);
             /* Goal */
-            if (aipet.getPathIterator() != null) {
+            if (aipet.getPath() != null) {
                 for (Vector2f c : aipet.getPath()) {
                     drawCircle(Color.YELLOW, c, 2);
                 }
@@ -157,6 +160,26 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             }
             if (aipet.getOldPlayerPos() != null) {
                 drawCircle(Color.BLUE, aipet.getOldPlayerPos());
+            }
+
+        }
+
+        /*
+         AI Monster pathfinding
+         */
+        if (monsterm.has(entity)) {
+            AIMonsterComponent monster = monsterm.get(entity);
+            /* Goal */
+            if (monster.getPath() != null) {
+                for (Vector2f c : monster.getPath()) {
+                    drawCircle(Color.YELLOW, c, 2);
+                }
+            }
+            if (monster.getGoal() != null) {
+                drawCircle(Color.RED, monster.getGoal());
+            }
+            if (monster.getOldPlayerPos() != null) {
+                drawCircle(Color.BLUE, monster.getOldPlayerPos());
             }
 
         }

@@ -18,6 +18,7 @@ import org.jsfml.system.Time;
 import org.jsfml.system.Vector2f;
 import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
+import systems.AIMonsterSystem;
 import systems.AIPetSystem;
 import systems.AnimateSystem;
 import systems.CollectSystem;
@@ -79,6 +80,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
         world.setSystem(new AIPetSystem(myMap));
+        world.setSystem(new AIMonsterSystem(myMap));
 
 
         EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
@@ -93,13 +95,16 @@ public class GameState extends AbstractApplicationState {
             EntityFactory.createCoin(world,(int)coins.get(coin).x , (int)coins.get(coin).y);
         }
 
-        EntityFactory.createPet(world, 50, 50);
+//        EntityFactory.createPet(world, 50, 50);
         EntityFactory.createPet(world, 550, 550);
-        EntityFactory.createPet(world, 550, 50);
-        EntityFactory.createPet(world, 50, 550);
+//        EntityFactory.createPet(world, 550, 50);
+//        EntityFactory.createPet(world, 50, 550);
+
+        EntityFactory.createMonster(world, 288 + 288, 96);
 
 
-        world.initialize(); 
+        world.initialize();
+        mDebugGraphics = true;
     }
 
 

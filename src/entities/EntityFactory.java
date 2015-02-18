@@ -5,6 +5,7 @@ import com.artemis.Entity;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
+import components.AIMonsterComponent;
 import components.AIPetComponent;
 import components.Collector;
 import components.CollideWithMap;
@@ -15,8 +16,11 @@ import components.SpriteAnimation;
 import components.SpriteAnimationComplex;
 import components.Transformation;
 import components.Velocity;
+import java.util.ArrayList;
+import java.util.List;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.IntRect;
+import org.jsfml.system.Vector2f;
 
 /**
  *
@@ -71,9 +75,24 @@ public class EntityFactory {
         pet.addComponent(new RenderableSprite("pet.png", new IntRect(0, 0, 24, 21)));
         pet.addComponent(new SpriteAnimation(4, 500, true));
         pet.addComponent(new HitBox(new FloatRect(0, 5, 24, 16)));
-        //pet.addComponent(new CollideWithMap());
         pet.addComponent(new AIPetComponent());
         pet.addToWorld();
+    }
+
+    public static void createMonster(World world, float x, float y) {
+        Entity monster = world.createEntity();
+        monster.addComponent(new Transformation(x, y));
+        monster.addComponent(new Velocity());
+        monster.addComponent(new RenderableSprite("monster.png", new IntRect(0, 0, 24, 36)));
+        monster.addComponent(new SpriteAnimation(4, 500, true));
+        monster.addComponent(new HitBox(new FloatRect(0, 5, 24, 31)));
+        //pet.addComponent(new CollideWithMap());
+        List<Vector2f> path = new ArrayList<>();
+        path.add(new Vector2f(x, y));
+        path.add(new Vector2f(x + 160, y));
+        path.add(new Vector2f(x + 161, y + 32));
+        monster.addComponent(new AIMonsterComponent(path));
+        monster.addToWorld();
     }
 
 }
