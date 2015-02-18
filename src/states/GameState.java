@@ -33,6 +33,7 @@ import systems.RenderingSpriteSystem;
 public class GameState extends AbstractApplicationState {
 
     private PlayerControlSystem mPlayerControlSystem;
+    private boolean mDebugGraphics;
 
     @Override
     public AppStateEnum getStateId() {
@@ -93,6 +94,9 @@ public class GameState extends AbstractApplicationState {
         }
 
         EntityFactory.createPet(world, 50, 50);
+        EntityFactory.createPet(world, 550, 550);
+        EntityFactory.createPet(world, 550, 50);
+        EntityFactory.createPet(world, 50, 550);
 
 
         world.initialize(); 
@@ -108,8 +112,11 @@ public class GameState extends AbstractApplicationState {
                 case ESCAPE:
                     getAppContent().exit();
                     break;
-                case R:
+                case R: // reset
                     initialize();
+                    break;
+                case D: // toggle graphic debug
+                    mDebugGraphics = !mDebugGraphics;
                     break;
                 case UP:
                     mPlayerControlSystem.goUp();
@@ -160,7 +167,9 @@ public class GameState extends AbstractApplicationState {
         myMap.renderFg(getGraphicEngine());
         // TODO : draw HUD && text if any
 
-        mDebugRenderingSystem.process();
+        if (mDebugGraphics) {
+            mDebugRenderingSystem.process();
+        }
         
     }
 
