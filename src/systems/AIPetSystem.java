@@ -9,6 +9,7 @@ import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import components.AIPetComponent;
 import components.HitBox;
+import components.RenderableSprite;
 import components.Transformation;
 import components.Velocity;
 import java.util.List;
@@ -34,6 +35,9 @@ public class AIPetSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<HitBox> hm;
 
+    @Mapper
+    ComponentMapper<RenderableSprite> rsm;
+
     private Vector2f playerPos;
     private final Map mMap;
     private FloatRect playerBox;
@@ -45,7 +49,9 @@ public class AIPetSystem extends EntityProcessingSystem {
                 AIPetComponent.class,
                 Velocity.class,
                 Transformation.class,
-                HitBox.class));
+                HitBox.class,
+                RenderableSprite.class
+        ));
         mMap = map;
     }
 
@@ -68,8 +74,11 @@ public class AIPetSystem extends EntityProcessingSystem {
         Transformation t = tm.get(entity);
         Vector2f pos = t.getTransformable().getPosition();
         FloatRect hitbox = hm.get(entity).getHitBox();
+        RenderableSprite rs = rsm.get(entity);
                 
         int currentState = petCmpt.getState();
+
+        //System.out.println(currentState);
 
         switch (currentState) {
             case 0: // Compute path to player
@@ -85,13 +94,26 @@ public class AIPetSystem extends EntityProcessingSystem {
                 petCmpt.setState(1);
                 break;
 
+
             case 1: // Move to next tile
                 if (petCmpt.getPathIterator().hasNext()) {
                     Vector2f next = petCmpt.getPathIterator().next();
                     petCmpt.setGoal(next);
                     Vector2f diff = Vector2f.sub(next, pos);
-                    float l = (float) Math.sqrt(diff.x * diff.x + diff.y * diff.y);
-                    vel.setVelocity(Vector2f.mul(diff, 50 / l));
+                    float fact = 50 / ((float) Math.sqrt(diff.x * diff.x + diff.y * diff.y));
+
+                    if (diff.x > diff.y && diff.x > -diff.y) {// right
+                        rs.setRectTop(19);
+                    } else if (-diff.x > diff.y && -diff.x > -diff.y) {// left
+                        rs.setRectTop(0);
+                    } else if (diff.y > 0) {// down
+                        rs.setRectTop(60);
+                    } else {// up
+                        rs.setRectTop(40);
+                    }
+
+                    vel.setVelocity(Vector2f.mul(diff, fact));
+
                     petCmpt.setState(2);
                 } else {
                     vel.setVelocity(Vector2f.ZERO);
@@ -100,12 +122,12 @@ public class AIPetSystem extends EntityProcessingSystem {
                 break;
 
             case 2: // Test if goal was reached
-                if (DistanceHelper.distance(pos, petCmpt.getGoal()) < 16) {
+                if (DistanceHelper.distance(pos, petCmpt.getGoal()) < 1) {
                     petCmpt.setState(1);
                 }
                 // if player moved a lot
                 Vector2f playerDiff = Vector2f.sub(playerPos, petCmpt.getOldPlayerPos());
-                if (playerDiff.x + playerDiff.y > 32) {
+                if (Math.abs(playerDiff.x) + Math.abs(playerDiff.y) > 32) {
                     petCmpt.setState(0);
                 }
                 break;

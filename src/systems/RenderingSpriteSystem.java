@@ -17,7 +17,7 @@ import org.jsfml.graphics.Transform;
 /**
  *
  */
-public class RenderingSystem extends EntityProcessingSystem {
+public class RenderingSpriteSystem extends EntityProcessingSystem {
 
     @Mapper
     ComponentMapper<Transformation> transm;
@@ -28,7 +28,7 @@ public class RenderingSystem extends EntityProcessingSystem {
     private final Sprite mTmpSprite;
 
     @SuppressWarnings("unchecked")
-    public RenderingSystem(GraphicEngine graphicEngine) {
+    public RenderingSpriteSystem(GraphicEngine graphicEngine) {
         super(Aspect.getAspectForAll(
                 Transformation.class, RenderableSprite.class)
         );
