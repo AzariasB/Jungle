@@ -9,9 +9,11 @@ import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
+import components.AIPetComponent;
 import components.HitBox;
 import components.Transformation;
 import graphics.GraphicEngine;
+import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.ConstFont;
 import org.jsfml.graphics.FloatRect;
@@ -31,17 +33,21 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
     ComponentMapper<Transformation> transm;
     @Mapper
     ComponentMapper<HitBox> hitboxm;
+    @Mapper
+    ComponentMapper<AIPetComponent> aipetm;
 
     private final GraphicEngine mGraphicEngine;
     private Text mTmpText;
     private RectangleShape mTmpRectShape;
     private GroupManager mGroupManager;
     private TagManager mTagManager;
+    private CircleShape mCircleShape;
 
     @SuppressWarnings("unchecked")
     public DebugRenderingSystem(GraphicEngine graphicEngine) {
         super(Aspect.getAspectForAll(Transformation.class)
-                .one(Transformation.class, HitBox.class));
+                .one(Transformation.class, HitBox.class,
+                        AIPetComponent.class));
 
         mGraphicEngine = graphicEngine;
     }
@@ -56,6 +62,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
         
         mTmpRectShape = new RectangleShape();
         mTmpRectShape.setFillColor(Color.BLACK);
+
+        mCircleShape = new CircleShape();
 
         mGroupManager = world.getManager(GroupManager.class);
         mTagManager = world.getManager(TagManager.class);
@@ -133,6 +141,38 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             mGraphicEngine.getRenderTarget().draw(mTmpRectShape);
         }
 
+        /*
+         AI Pet pathfinding
+         */
+        if (aipetm.has(entity)) {
+            AIPetComponent aipet = aipetm.get(entity);
+            /* Goal */
+            if (aipet.getPathIterator() != null) {
+                for (Vector2f c : aipet.getPath()) {
+                    drawCircle(Color.YELLOW, c, 2);
+                }
+            }
+            if (aipet.getGoal() != null) {
+                drawCircle(Color.RED, aipet.getGoal());
+            }
+            if (aipet.getOldPlayerPos() != null) {
+                drawCircle(Color.BLUE, aipet.getOldPlayerPos());
+            }
+
+        }
+    }
+
+    private void drawCircle(Color color, Vector2f position) {
+        drawCircle(color, position, 4.f);
+    }
+
+    private void drawCircle(Color color, Vector2f position, float radius) {
+        mCircleShape.setRadius(radius);
+        mCircleShape.setFillColor(color);
+        mCircleShape.setPosition(position);
+        mCircleShape.setOrigin(mCircleShape.getLocalBounds().width / 2,
+                mCircleShape.getLocalBounds().height / 2);
+        mGraphicEngine.getRenderTarget().draw(mCircleShape);
     }
 
 }

@@ -50,4 +50,8 @@ public class AIPetComponent extends Component {
         return mOldPlayerPos;
     }
 
+    public Iterable<Vector2f> getPath() {
+        return mPath;
+    }
+
 }

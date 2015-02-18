@@ -43,7 +43,7 @@ public class GameState extends AbstractApplicationState {
     public void notifyEntering() {
         MusicEngine mesMusiques = getAppContent().getMusicEngine();
         gameMusic = mesMusiques.getMusic("happy.ogg");
-        gameMusic.play();
+        //gameMusic.play();
     }
 
     @Override

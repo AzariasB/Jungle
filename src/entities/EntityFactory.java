@@ -71,7 +71,7 @@ public class EntityFactory {
         pet.addComponent(new RenderableSprite("pet.png", new IntRect(0, 0, 24, 21)));
         pet.addComponent(new SpriteAnimation(4, 500, true));
         pet.addComponent(new HitBox(new FloatRect(0, 5, 24, 16)));
-        pet.addComponent(new CollideWithMap());
+        //pet.addComponent(new CollideWithMap());
         pet.addComponent(new AIPetComponent());
         pet.addToWorld();
     }
