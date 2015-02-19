@@ -5,15 +5,17 @@ import com.artemis.ComponentMapper;
 import com.artemis.Entity;
 import com.artemis.annotations.Mapper;
 import com.artemis.systems.EntityProcessingSystem;
+import components.AnimatedTextureRect;
+import components.MultipleAnimations;
+import components.Orientation;
+import components.Orientation.Direction;
+import static components.Orientation.Direction.DOWN;
+import static components.Orientation.Direction.LEFT;
+import static components.Orientation.Direction.RIGHT;
+import static components.Orientation.Direction.UP;
 import components.Player;
-import components.Player.Direction;
-import static components.Player.Direction.DOWN;
-import static components.Player.Direction.LEFT;
-import static components.Player.Direction.RIGHT;
-import static components.Player.Direction.UP;
-import components.RenderableSprite;
-import components.SpriteAnimation;
 import components.Velocity;
+import content.Animations;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.jsfml.system.Vector2f;
@@ -30,10 +32,11 @@ public class PlayerControlSystem extends EntityProcessingSystem {
     ComponentMapper<Velocity> vm;
 
     @Mapper
-    ComponentMapper<RenderableSprite> rsm;
+    ComponentMapper<MultipleAnimations> mam;
 
     @Mapper
-    ComponentMapper<SpriteAnimation> sam;
+    ComponentMapper<Orientation> om;
+
 
     Deque<Direction> mForces;
 
@@ -42,8 +45,8 @@ public class PlayerControlSystem extends EntityProcessingSystem {
         super(Aspect.getAspectForAll(
                 Player.class,
                 Velocity.class,
-                RenderableSprite.class,
-                SpriteAnimation.class));
+                MultipleAnimations.class,
+                Orientation.class));
 
         mForces = new ArrayDeque<>(4);
     }
@@ -52,46 +55,43 @@ public class PlayerControlSystem extends EntityProcessingSystem {
 
     @Override
     protected void process(Entity entity) {
-
-        SpriteAnimation sa = sam.get(entity);
+        MultipleAnimations ma = mam.get(entity);
+        AnimatedTextureRect anim = ma.getCurrentAnimation();
 
         if (mForces.isEmpty()) {
-            sa.setPlaying(false);
+            anim.setPlaying(false);
             vm.get(entity).setVelocity(Vector2f.ZERO);
 
         } else {
-            sa.setPlaying(true);
+            anim.setPlaying(true);
 
-            Player p = pm.get(entity);
-            RenderableSprite rs = rsm.get(entity);
-
+            Orientation or = om.get(entity);
             Direction last = mForces.getLast();
-            p.setDirection(last);
+            or.setDirection(last);
 
             float x = 0, y = 0;
 
             switch (last) {
                 case UP:
                     y -= VELOCITY;
-                    rs.setRectTop(3 * 32);
+                    ma.setAnimation(Animations.GO_UP);
                     break;
                 case LEFT:
                     x -= VELOCITY;
-                    rs.setRectTop(32);
+                    ma.setAnimation(Animations.GO_LEFT);
                     break;
                 case DOWN:
                     y += VELOCITY;
-                    rs.setRectTop(0);
+                    ma.setAnimation(Animations.GO_DOWN);
                     break;
                 case RIGHT:
                     x += VELOCITY;
-                    rs.setRectTop(2 * 32);
+                    ma.setAnimation(Animations.GO_RIGHT);
                     break;
             }
 
             vm.get(entity).setVelocity(new Vector2f(x, y));
         }
-
     }
 
     public void goUp() {

@@ -9,9 +9,10 @@ import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import components.AIPetComponent;
 import components.HitBox;
-import components.RenderableSprite;
+import components.MultipleAnimations;
 import components.Transformation;
 import components.Velocity;
+import content.Animations;
 import java.util.List;
 import map.Map;
 import org.jsfml.graphics.FloatRect;
@@ -36,7 +37,7 @@ public class AIPetSystem extends EntityProcessingSystem {
     ComponentMapper<HitBox> hm;
 
     @Mapper
-    ComponentMapper<RenderableSprite> rsm;
+    ComponentMapper<MultipleAnimations> mam;
 
     private Vector2f playerPos;
     private final Map mMap;
@@ -50,7 +51,7 @@ public class AIPetSystem extends EntityProcessingSystem {
                 Velocity.class,
                 Transformation.class,
                 HitBox.class,
-                RenderableSprite.class
+                MultipleAnimations.class
         ));
         mMap = map;
     }
@@ -74,7 +75,7 @@ public class AIPetSystem extends EntityProcessingSystem {
         Transformation t = tm.get(entity);
         Vector2f pos = t.getTransformable().getPosition();
         FloatRect hitbox = hm.get(entity).getHitBox();
-        RenderableSprite rs = rsm.get(entity);
+        MultipleAnimations ma = mam.get(entity);
                 
         int currentState = petCmpt.getState();
 
@@ -103,13 +104,13 @@ public class AIPetSystem extends EntityProcessingSystem {
                     float fact = 50 / ((float) Math.sqrt(diff.x * diff.x + diff.y * diff.y));
 
                     if (diff.x > diff.y && diff.x > -diff.y) {// right
-                        rs.setRectTop(19);
+                        ma.setAnimation(Animations.GO_RIGHT);
                     } else if (-diff.x > diff.y && -diff.x > -diff.y) {// left
-                        rs.setRectTop(0);
+                        ma.setAnimation(Animations.GO_LEFT);
                     } else if (diff.y > 0) {// down
-                        rs.setRectTop(60);
+                        ma.setAnimation(Animations.GO_DOWN);
                     } else {// up
-                        rs.setRectTop(40);
+                        ma.setAnimation(Animations.GO_UP);
                     }
 
                     vel.setVelocity(Vector2f.mul(diff, fact));

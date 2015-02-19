@@ -60,7 +60,8 @@ public class MovemementCollideMapSystem extends EntityProcessingSystem {
 
             FloatRect hitbox = hitboxm.getHitBox();
 
-            if (!mMap.isHittingBlock(newPos.x + hitbox.left,
+            if (!mMap.isHittingBlock(
+                    newPos.x + hitbox.left,
                     newPos.y + hitbox.top,
                     hitbox.width,
                     hitbox.height)) {

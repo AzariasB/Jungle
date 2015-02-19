@@ -20,21 +20,32 @@ import org.jsfml.window.event.Event;
 import sounds.MusicEngine;
 import systems.AIMonsterSystem;
 import systems.AIPetSystem;
-import systems.AnimateSystem;
+import systems.AnimateTextRectSystem;
 import systems.CollectSystem;
 import systems.DebugRenderingSystem;
 import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
+import systems.MultipleAnimationSystem;
 import systems.PlayerControlSystem;
-import systems.RenderingSpriteSystem;
+import systems.RenderSpriteSystem;
 
 /**
  *
  */
 public class GameState extends AbstractApplicationState {
 
+    private boolean mDebugGraphics = true;
+
+    private Music gameMusic;
+    private Map myMap;
+
+    private World world;
     private PlayerControlSystem mPlayerControlSystem;
-    private boolean mDebugGraphics;
+    private RenderSpriteSystem mRenderingSystem;
+    private DebugRenderingSystem mDebugRenderingSystem;
+
+    
+    
 
     @Override
     public AppStateEnum getStateId() {
@@ -73,38 +84,38 @@ public class GameState extends AbstractApplicationState {
         world.setManager(new TeamManager());
 
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
-        world.setSystem(new AnimateSystem());
         world.setSystem(new MovemementSystem());
         world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
-        world.setSystem(mRenderingSystem = new RenderingSpriteSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
-//        world.setSystem(new AIPetSystem(myMap));
-//        world.setSystem(new AIMonsterSystem(myMap));
+        world.setSystem(new AIPetSystem(myMap));
+        world.setSystem(new AIMonsterSystem(myMap));
+        world.setSystem(mRenderingSystem = new RenderSpriteSystem(getGraphicEngine()), true);
+        world.setSystem(new AnimateTextRectSystem());
+        world.setSystem(new MultipleAnimationSystem());
 
 
-        EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
+        EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
         /* Collectables */
-        EntityFactory.createNoixCoco(world, 150, 350);
-        EntityFactory.createCoin(world, 300, 400);
-        EntityFactory.createCoin(world, 350, 400);
-        EntityFactory.createCoin(world, 250, 400);
+        EntityFactory.createNoixCoco(getAppContent(), world, 150, 350);
+        EntityFactory.createCoin(getAppContent(), world, 300, 400);
+        EntityFactory.createCoin(getAppContent(), world, 350, 400);
+        EntityFactory.createCoin(getAppContent(), world, 250, 400);
         List<Vector2f> coins = myMap.getCoins();
-        for(int coin = 0; coin < coins.size();coin++){
-            EntityFactory.createCoin(world,(int)coins.get(coin).x , (int)coins.get(coin).y);
+        for (int coin = 0; coin < coins.size(); coin++) {
+            EntityFactory.createCoin(getAppContent(), world, (int) coins.get(coin).x, (int) coins.get(coin).y);
         }
 
 //        EntityFactory.createPet(world, 50, 50);
-        EntityFactory.createPet(world, 550, 550);
+        EntityFactory.createPet(getAppContent(), world, 550, 550);
 //        EntityFactory.createPet(world, 550, 50);
 //        EntityFactory.createPet(world, 50, 550);
 
-        EntityFactory.createMonster(world, 288 + 288, 96);
+        EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);
 
 
         world.initialize();
-        mDebugGraphics = true;
     }
 
 
@@ -166,11 +177,13 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
-        myMap.render(getGraphicEngine(),new Vector2f(0, 0),32,32);
-
+        myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 16, 16);
         mRenderingSystem.process();
         myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);
+
         // TODO : draw HUD && text if any
+
+        
 
         if (mDebugGraphics) {
             mDebugRenderingSystem.process();
@@ -178,12 +191,7 @@ public class GameState extends AbstractApplicationState {
         
     }
 
-    private Music gameMusic;
-
-    private World world;
-    private RenderingSpriteSystem mRenderingSystem;
-    private DebugRenderingSystem mDebugRenderingSystem;
-    private Map myMap;
+    
 
     
 

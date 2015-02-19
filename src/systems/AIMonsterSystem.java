@@ -9,9 +9,10 @@ import com.artemis.managers.TagManager;
 import com.artemis.systems.EntityProcessingSystem;
 import components.AIMonsterComponent;
 import components.HitBox;
-import components.RenderableSprite;
+import components.MultipleAnimations;
 import components.Transformation;
 import components.Velocity;
+import content.Animations;
 import java.util.List;
 import map.Map;
 import org.jsfml.graphics.FloatRect;
@@ -36,7 +37,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
     ComponentMapper<HitBox> hm;
 
     @Mapper
-    ComponentMapper<RenderableSprite> rsm;
+    ComponentMapper<MultipleAnimations> mam;
 
     private Vector2f playerPos;
     private final Map mMap;
@@ -50,7 +51,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
                 Velocity.class,
                 Transformation.class,
                 HitBox.class,
-                RenderableSprite.class
+                MultipleAnimations.class
         ));
         mMap = map;
     }
@@ -74,7 +75,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
         Transformation t = tm.get(entity);
         Vector2f pos = t.getTransformable().getPosition();
         FloatRect hitbox = hm.get(entity).getHitBox();
-        RenderableSprite rs = rsm.get(entity);
+        MultipleAnimations ma = mam.get(entity);
                 
         int currentState = monster.getState();
 
@@ -107,13 +108,13 @@ public class AIMonsterSystem extends EntityProcessingSystem {
                     float fact = 50 / ((float) Math.sqrt(diff.x * diff.x + diff.y * diff.y));
 
                     if (diff.x > diff.y && diff.x > -diff.y) {// right
-                        rs.setRectTop(34);
+                        ma.setAnimation(Animations.GO_RIGHT);
                     } else if (-diff.x > diff.y && -diff.x > -diff.y) {// left
-                        rs.setRectTop(100);
+                        ma.setAnimation(Animations.GO_LEFT);
                     } else if (diff.y > 0) {// down
-                        rs.setRectTop(66);
+                        ma.setAnimation(Animations.GO_DOWN);
                     } else {// up
-                        rs.setRectTop(0);
+                        ma.setAnimation(Animations.GO_UP);
                     }
 
                     vel.setVelocity(Vector2f.mul(diff, fact));
@@ -129,12 +130,22 @@ public class AIMonsterSystem extends EntityProcessingSystem {
                 if (DistanceHelper.distance(pos, monster.getGoal()) < 1) {
                     monster.setState(1);
                 }
-                // if player moved a lot
-/*                Vector2f playerDiff = Vector2f.sub(playerPos, monster.getOldPlayerPos());
-                 if (Math.abs(playerDiff.x) + Math.abs(playerDiff.y) > 32) {
-                    monster.setState(0);
+                // if player is near
+                if (DistanceHelper.distance(pos, playerPos) < 256) {
+                    monster.setState(3);
                 }
-                 */
+                break;
+
+            case 3: // chase player
+                List<Vector2f> path = mMap.computePath(
+                        pos.x,
+                        pos.y,
+                        playerPos.x,
+                        playerPos.y,
+                        hitbox.width + hitbox.left,
+                        hitbox.height + hitbox.top);
+                monster.setPath(path);
+                monster.setState(4);
                 break;
 
         }
