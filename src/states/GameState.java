@@ -55,12 +55,12 @@ public class GameState extends AbstractApplicationState {
 
     @Override
     public void initialize() {
-        getAppContent().getOptions().setIfUnset("map.filepath", "./assets/Maps/maps.tmx");
+        getAppContent().getOptions().setIfUnset("maps.filepath", "./assets/Maps/maps.tmx");
 
         /*
         New Loading system : with loader class
         */
-        Loader ld = new Loader(getAppContent().getOptions().get("map.filepath"), getGraphicEngine());
+        Loader ld = new Loader(getAppContent().getOptions().get("maps.filepath"), getGraphicEngine());
         myMap = ld.getMap();
 
         /*
@@ -166,10 +166,10 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
-        myMap.render(getGraphicEngine());
+        myMap.render(getGraphicEngine(),new Vector2f(15.4f, 15.3f),64,64);
 
         mRenderingSystem.process();
-        myMap.renderFg(getGraphicEngine());
+        myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);
         // TODO : draw HUD && text if any
 
         if (mDebugGraphics) {

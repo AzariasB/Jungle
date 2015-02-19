@@ -5,7 +5,6 @@ package map;
 
 import graphics.GraphicEngine;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.jsfml.graphics.ConstTexture;
 import org.jsfml.graphics.RenderStates;
@@ -40,9 +39,9 @@ public class Map {
 
     public List<Vector2f> getCoins() {
         ArrayList<Vector2f> myCoins = new ArrayList<>();
-        for (int i = 0; i < mObjects.size(); i++) {
-            if (mObjects.get(i).getName().toLowerCase().equals("coin")) {
-                myCoins.add(mObjects.get(i).getPosition());
+        for (MapObject mObject : mObjects) {
+            if (mObject.getName().toLowerCase().equals("coin")) {
+                myCoins.add(mObject.getPosition());
             }
         }
         return myCoins;
@@ -58,19 +57,17 @@ public class Map {
 
     public void setLayers(List<Layer> myNewLayers) {
         mLayers = myNewLayers;
-        loadVertex();
     }
 
-    public void displayMap() {
-        for (LayerType fil : LayerType.values()) {
-            System.out.println(fil.getName() + "==============");
-            if (mLayers.get(fil.getIndex()) != null) {
-                System.out.println(Arrays.deepToString(mLayers.get(fil.getIndex()).getArray()));
-            }
-
-        }
-    }
-
+//    public void displayMap() {
+//        for (LayerType fil : LayerType.values()) {
+//            System.out.println(fil.getName() + "==============");
+//            if (mLayers.get(fil.getIndex()) != null) {
+//                System.out.println(Arrays.deepToString(mLayers.get(fil.getIndex()).getArray()));
+//            }
+//
+//        }
+//    }
     public boolean isHittingBlock(float x, float y, float width, float height) {
 
         int _x = (int) x;
@@ -123,17 +120,20 @@ public class Map {
         return path;
     }
 
-    public void render(GraphicEngine drawInIt) {
+    public void render(GraphicEngine drawInIt, Vector2f position, int height, int width) {
         RenderStates render = new RenderStates(mTexture);
-        for (int i = 0 ; i < LayerType.FOREGROUND.getIndex();i++) {
-            mLayers.get(i).drawYourSelf(drawInIt, render);
+        for (Layer lay : mLayers) {
+            if (mLayers.indexOf(lay) < LayerType.FOREGROUND.getIndex()) {
+                lay.drawYourSelf(drawInIt, render, position, width, height);
+            }
         }
+
     }
-    
-    public void renderFg(GraphicEngine drawInThat){
+
+    public void renderFg(GraphicEngine drawInThat, Vector2f position, int height, int width) {
         RenderStates render = new RenderStates(mTexture);
-        for(int i = LayerType.FOREGROUND.getIndex(); i < mLayers.size();i++){
-            mLayers.get(i).drawYourSelf(drawInThat, render);
+        for (int i = LayerType.FOREGROUND.getIndex(); i < mLayers.size(); i++) {
+            mLayers.get(i).drawYourSelf(drawInThat, render, position, width, height);
         }
     }
 
@@ -142,89 +142,98 @@ public class Map {
      *
      * It takes care of the rotation of the tiles (horizontal && vertical)
      *
+     * @param toLoad Array of integer containing the index of the texture
+     * @param xBegin x position of the very begining of the first tile
+     * @param yBegin y position of the very begining of the first tile
+     * @return the list of vertex corresponding to the texture indexes
      */
-    private void loadVertex() {
+    public static List<Vertex> loadVertex(int[][] toLoad, int xBegin, int yBegin) {
         ArrayList<Vertex> verticies = new ArrayList<>();
-        for (Layer lay : mLayers) {
-            int[][] myArray = lay.getArray();
-            for (int y_arr = 0; y_arr < myArray.length; y_arr++) {
-                for (int x_arr = 0; x_arr < myArray[y_arr].length; x_arr++) {
+        for (int y_arr = 0; y_arr < toLoad.length; y_arr++) {
+            for (int x_arr = 0; x_arr < toLoad[y_arr].length; x_arr++) {
 
-                    int indexSp = myArray[y_arr][x_arr];
-                    int XTextPos;
-                    int yTextPos;
+                int indexSp = toLoad[y_arr][x_arr];
+                int XTextPos;
+                int yTextPos;
 
-                    Vertex leftUpVertex;
-                    Vertex leftDownVertex;
-                    Vertex rightUpVertex;
-                    Vertex rightDownVertex;
+                Vertex leftUpVertex;
+                Vertex leftDownVertex;
+                Vertex rightUpVertex;
+                Vertex rightDownVertex;
 
-                    int luXincr = 0;
-                    int luYincr = 0;
-                    int ldXincr = 0;
-                    int ldYincr = 0;
-                    int rdXincr = 0;
-                    int rdYincr = 0;
-                    int ruXincr = 0;
-                    int ruYincr = 0;
+                int luXincr = 0;
+                int luYincr = 0;
+                int ldXincr = 0;
+                int ldYincr = 0;
+                int rdXincr = 0;
+                int rdYincr = 0;
+                int ruXincr = 0;
+                int ruYincr = 0;
 
-                    if (indexSp < 0) { // With Horizontal case
-                        indexSp = indexSp << 24;
-                        indexSp = Integer.reverseBytes(indexSp);
+                if (indexSp < 0) { // With Horizontal rotation case
+                    indexSp = indexSp << 24;
+                    indexSp = Integer.reverseBytes(indexSp);
 
-                        luXincr = 1;
-                        ldXincr = 1;
-                        ldYincr = 1;
-                        rdYincr = 1;
+                    luXincr = 1;
+                    ldXincr = 1;
+                    ldYincr = 1;
+                    rdYincr = 1;
 
-                    } else if (indexSp > LAST_TILESET) { // With vertical rotation case
-                        indexSp = indexSp << 24;
-                        indexSp = Integer.reverseBytes(indexSp);
+                } else if (indexSp > LAST_TILESET) { // With vertical rotation case
+                    indexSp = indexSp << 24;
+                    indexSp = Integer.reverseBytes(indexSp);
 
-                        luYincr = 1;
-                        ruXincr = 1;
-                        ruYincr = 1;
-                        rdXincr = 1;
+                    luYincr = 1;
+                    ruXincr = 1;
+                    ruYincr = 1;
+                    rdXincr = 1;
 
-                    } else { // Normal case
-                        ruXincr = 1;
-                        rdXincr = 1;
-                        rdYincr = 1;
-                        ldYincr = 1;
-
-                    }
-                    indexSp--;
-
-                    XTextPos = (indexSp % 64);
-                    yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
-                    XTextPos *= TILE_SIZE;
-
-                    leftUpVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, y_arr * TILE_SIZE),
-                            new Vector2f(XTextPos + luXincr * TILE_SIZE, yTextPos + luYincr * TILE_SIZE));
-
-                    leftDownVertex = new Vertex(new Vector2f(x_arr * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                            new Vector2f(XTextPos + ldXincr * TILE_SIZE, yTextPos + ldYincr * TILE_SIZE));
-
-                    rightUpVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, y_arr * TILE_SIZE),
-                            new Vector2f(XTextPos + ruXincr * TILE_SIZE, yTextPos + ruYincr * TILE_SIZE));
-
-                    rightDownVertex = new Vertex(new Vector2f((x_arr + 1) * TILE_SIZE, (y_arr + 1) * TILE_SIZE),
-                            new Vector2f(XTextPos + rdXincr * TILE_SIZE, yTextPos + rdYincr * TILE_SIZE));
-
-                    verticies.add(leftUpVertex);
-                    verticies.add(rightUpVertex);
-                    verticies.add(rightDownVertex);
-                    verticies.add(leftDownVertex);
+                } else { // Normal case
+                    ruXincr = 1;
+                    rdXincr = 1;
+                    rdYincr = 1;
+                    ldYincr = 1;
 
                 }
-            }
-            lay.setVerticies(verticies);
-            verticies.clear();
-        }
+                indexSp--;
 
+                XTextPos = (indexSp % 64);
+                yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
+                XTextPos *= TILE_SIZE;
+                int xTilePos = x_arr + xBegin ;
+                int yTilePos = y_arr + yBegin;
+       //         System.out.print("\tx:" + xTilePos + "-y:" + yTilePos);
+
+                leftUpVertex = new Vertex(
+                        new Vector2f(xTilePos * TILE_SIZE, yTilePos * TILE_SIZE),
+                        new Vector2f(XTextPos + luXincr * TILE_SIZE, yTextPos + luYincr * TILE_SIZE)
+                );
+
+                leftDownVertex = new Vertex(
+                        new Vector2f(xTilePos * TILE_SIZE, (yTilePos + 1) * TILE_SIZE),
+                        new Vector2f(XTextPos + ldXincr * TILE_SIZE, yTextPos + ldYincr * TILE_SIZE)
+                );
+
+                rightUpVertex = new Vertex(
+                        new Vector2f((xTilePos + 1) * TILE_SIZE, yTilePos * TILE_SIZE),
+                        new Vector2f(XTextPos + ruXincr * TILE_SIZE, yTextPos + ruYincr * TILE_SIZE)
+                );
+
+                rightDownVertex = new Vertex(
+                        new Vector2f((xTilePos + 1) * TILE_SIZE, (yTilePos + 1) * TILE_SIZE), // Position
+                        new Vector2f(XTextPos + rdXincr * TILE_SIZE, yTextPos + rdYincr * TILE_SIZE) // Texture position
+                );
+
+                verticies.add(leftUpVertex);
+                verticies.add(rightUpVertex);
+                verticies.add(rightDownVertex);
+                verticies.add(leftDownVertex);
+            }
+        }
+        return verticies;
     }
 
-    private TileTest mEmptyLayer;
+    private final TileTest mEmptyLayer;
     private List<Layer> mLayers;
     private List<MapObject> mObjects;
     private final ConstTexture mTexture;
