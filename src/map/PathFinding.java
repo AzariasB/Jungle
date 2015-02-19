@@ -96,7 +96,7 @@ public class PathFinding {
             int currentDistance = Integer.MAX_VALUE;
 
             for (Vector2i it : openSet) {
-                int itDistance = computeDistance(it, destination);
+                int itDistance = computeFastDistance(it, destination);
 
                 if (itDistance < currentDistance) {
                     current = it;
@@ -181,11 +181,18 @@ public class PathFinding {
         return false;
     }
 
-    private static int computeDistance(Vector2i a, Vector2i b) {
+    private static int computeFastDistance(Vector2i a, Vector2i b) {
         int x = a.x - b.x;
         int y = a.y - b.y;
 
-        return x * x + y * y;
+        if (x < 0) {
+            x = -x;
+        }
+        if (y < 0) {
+            y = -y;
+        }
+
+        return x + y;// x * x + y * y;
     }
 
 }
