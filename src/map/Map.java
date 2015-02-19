@@ -60,15 +60,7 @@ public class Map {
         mLayers = myNewLayers;
     }
 
-//    public void displayMap() {
-//        for (LayerType fil : LayerType.values()) {
-//            System.out.println(fil.getName() + "==============");
-//            if (mLayers.get(fil.getIndex()) != null) {
-//                System.out.println(Arrays.deepToString(mLayers.get(fil.getIndex()).getArray()));
-//            }
-//
-//        }
-//    }
+
     public boolean isHittingBlock(float x, float y, float width, float height) {
 
         int _x = (int) x;
@@ -76,11 +68,11 @@ public class Map {
         int _w = (int) width;
         int _h = (int) height;
 
-        int _sx = _x / TILE_SIZE;
-        int _sy = _y / TILE_SIZE;
+        int _sx = _x >> TILE_BIT_SHIFT;
+        int _sy = _y >> TILE_BIT_SHIFT;
 
-        int _ex = (_x + _w - 1) / TILE_SIZE;
-        int _ey = (_y + _h - 1) / TILE_SIZE;
+        int _ex = (_x + _w - 1) >> TILE_BIT_SHIFT;
+        int _ey = (_y + _h - 1) >> TILE_BIT_SHIFT;
 
         TileTest lay = getCollisionLayer();
 
@@ -120,7 +112,15 @@ public class Map {
 
         return path;
     }
-
+/**
+ * 
+ * 
+ * 
+ * @param drawInIt the RenderTarget to draw in
+ * @param position the left-bottom position of the view
+ * @param height the height of the view
+ * @param width the width of the view
+ */
     public void render(GraphicEngine drawInIt, Vector2f position, int height, int width) {
         RenderStates render = new RenderStates(mTexture);
         for (Layer lay : mLayers) {
@@ -206,7 +206,6 @@ public class Map {
                     XTextPos *= TILE_SIZE;
                     int xTilePos = x_arr + xBegin;
                     int yTilePos = y_arr + yBegin;
-                    //         System.out.print("\tx:" + xTilePos + "-y:" + yTilePos);
 
                     leftUpVertex = new Vertex(
                             new Vector2f(xTilePos << TILE_BIT_SHIFT, yTilePos << TILE_BIT_SHIFT),

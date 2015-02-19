@@ -79,8 +79,8 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderingSpriteSystem(getGraphicEngine()), true);
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
-        world.setSystem(new AIPetSystem(myMap));
-        world.setSystem(new AIMonsterSystem(myMap));
+//        world.setSystem(new AIPetSystem(myMap));
+//        world.setSystem(new AIMonsterSystem(myMap));
 
 
         EntityFactory.createPlayer(world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
@@ -166,7 +166,7 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
-        myMap.render(getGraphicEngine(),new Vector2f(15.4f, 15.3f),64,64);
+        myMap.render(getGraphicEngine(),new Vector2f(0, 0),32,32);
 
         mRenderingSystem.process();
         myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);

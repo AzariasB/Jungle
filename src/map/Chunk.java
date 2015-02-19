@@ -65,6 +65,12 @@ public class Chunk {
         return mMap;
     }
     
+    /**
+     * This function draw all the Verticies that the chunck contains
+     * 
+     * @param target The RenderTarget to draw the verticies
+     * @param renderState The RenderState to draw the verticies correctly
+     */
     public void drawYourVerticies(GraphicEngine target, RenderStates renderState) {
         for (Vertex[] toDraw : mVerticies) {
             target.getRenderTarget().draw(toDraw, PrimitiveType.QUADS, renderState);
@@ -73,7 +79,7 @@ public class Chunk {
     }
 
     private final int[][] mMap;
-    private List<Vertex[]> mVerticies;
+    private final List<Vertex[]> mVerticies;
     
     private final int BUFFER_SIZE = 256;
 }
