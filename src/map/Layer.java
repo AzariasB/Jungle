@@ -29,7 +29,7 @@ public class Layer implements TileTest {
     public void drawYourSelf(GraphicEngine displayer, RenderStates states, Vector2f position, int width, int height) {
         for (int yChunckIndex = (int) position.y; yChunckIndex < (int) position.y + height; yChunckIndex += 16) {
             for (int xChunkIndex = (int) position.x; xChunkIndex < (int) position.x + width; xChunkIndex += 16) {
-                int chunckIndex = (xChunkIndex / CHUNK_SIZE) + ((yChunckIndex / CHUNK_SIZE) * (MAP_WIDTH / CHUNK_SIZE + 1));
+                int chunckIndex = (xChunkIndex >> MAGIC_CHUNK) + ((yChunckIndex >> MAGIC_CHUNK) * ((MAP_WIDTH >> MAGIC_CHUNK ) + 1));
                 if (chunckIndex < mChunks.size()) {
                     mChunks.get(chunckIndex).drawYourVerticies(displayer, states);
                 }
@@ -41,10 +41,10 @@ public class Layer implements TileTest {
     public boolean tileExists(int xIndex, int yIndex) {
         // TODO : remove when we are sure our player is
         // always into the map.
-        int chunck = xIndex / CHUNK_SIZE + ((yIndex / CHUNK_SIZE) * (MAP_WIDTH / CHUNK_SIZE + 1));
+        int chunck = xIndex / CHUNK_SIZE + ((yIndex >> MAGIC_CHUNK) * ( (MAP_WIDTH >> MAGIC_CHUNK ) + 1));
 
-        int xPos = xIndex % CHUNK_SIZE;
-        int yPos = yIndex % CHUNK_SIZE;
+        int xPos = xIndex & MASK_CHUNK;
+        int yPos = yIndex & MASK_CHUNK;
 
         if (chunck < mChunks.size() && xPos > 0 && yPos > 0 && xPos < CHUNK_SIZE && yPos < CHUNK_SIZE ) {
             return mChunks.get(chunck).getTile(xPos, yPos) != 0;
@@ -55,11 +55,11 @@ public class Layer implements TileTest {
 
     private void setChunks(int[][] map) {
         createChunks(MAP_WIDTH, MAP_HEIGHT);
-        int nbChunksWidth = (MAP_WIDTH / CHUNK_SIZE) + 1;
+        int nbChunksWidth = (MAP_WIDTH >> MAGIC_CHUNK) + 1;
         for (int yTileIndex = 0; yTileIndex < MAP_HEIGHT; yTileIndex++) {
-            for (int xChunkIndex = 0; xChunkIndex <= MAP_WIDTH / CHUNK_SIZE; xChunkIndex++) {
-                int indexChunk = (xChunkIndex + ((yTileIndex / CHUNK_SIZE) * nbChunksWidth));
-                int[] nwLine = Arrays.copyOfRange(map[yTileIndex], (xChunkIndex * CHUNK_SIZE), (xChunkIndex + 1) * CHUNK_SIZE);
+            for (int xChunkIndex = 0; xChunkIndex <= MAP_WIDTH >> MAGIC_CHUNK; xChunkIndex++) {
+                int indexChunk = (xChunkIndex + ((yTileIndex >> MAGIC_CHUNK) * nbChunksWidth));
+                int[] nwLine = Arrays.copyOfRange(map[yTileIndex], (xChunkIndex << MAGIC_CHUNK), (xChunkIndex + 1) << MAGIC_CHUNK);
                 try {
                     mChunks.get(indexChunk).addLineToMap(nwLine, yTileIndex % 16);
                 } catch (IndexOutOfBoundsException ex) {
@@ -72,16 +72,16 @@ public class Layer implements TileTest {
 
     private void updateChunks() {
         for (int i = 0; i < mChunks.size(); i++) {
-            int xpos = i % ((MAP_WIDTH / CHUNK_SIZE) + 1);
-            int ypos = (i - xpos) / ((MAP_WIDTH / CHUNK_SIZE) + 1);
-            List<Vertex> chVertex = Map.loadVertex(mChunks.get(i).getMap(), xpos * CHUNK_SIZE, ypos * CHUNK_SIZE);
+            int xpos = i % ((MAP_WIDTH >> MAGIC_CHUNK) + 1);
+            int ypos = (i - xpos) / ((MAP_WIDTH >> MAGIC_CHUNK) + 1);
+            List<Vertex> chVertex = Map.loadVertex(mChunks.get(i).getMap(), xpos << MAGIC_CHUNK, ypos << MAGIC_CHUNK);
             mChunks.get(i).update(chVertex);
         }
     }
 
     private void createChunks(int width, int height) {
-        for (int y = 0; y <= height / CHUNK_SIZE; y++) {
-            for (int x = 0; x <= width / CHUNK_SIZE; x++) {
+        for (int y = 0; y <= height >> MAGIC_CHUNK; y++) {
+            for (int x = 0; x <= width >> MAGIC_CHUNK; x++) {
                 mChunks.add(new Chunk(CHUNK_SIZE, CHUNK_SIZE));
             }
         }
@@ -92,6 +92,8 @@ public class Layer implements TileTest {
     private final int MAP_HEIGHT;
 
     private static final int CHUNK_SIZE = 16;
+    private static final int MASK_CHUNK = 0xF;
+    private static final int MAGIC_CHUNK = 4;
 
     Map.LayerType getFilter() {
         return mFilter;

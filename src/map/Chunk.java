@@ -74,5 +74,6 @@ public class Chunk {
 
     private final int[][] mMap;
     private List<Vertex[]> mVerticies;
+    
     private final int BUFFER_SIZE = 256;
 }

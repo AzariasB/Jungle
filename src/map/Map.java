@@ -6,6 +6,7 @@ package map;
 import graphics.GraphicEngine;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.Validate;
 import org.jsfml.graphics.ConstTexture;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.Vertex;
@@ -114,7 +115,7 @@ public class Map {
         List<Vector2f> path = new ArrayList<>(indexPath.size());
 
         for (Vector2i ic : indexPath) {
-            path.add(new Vector2f(ic.x * TILE_SIZE, ic.y * TILE_SIZE));
+            path.add(new Vector2f(ic.x << TILE_BIT_SHIFT, ic.y << TILE_BIT_SHIFT));
         }
 
         return path;
@@ -153,81 +154,86 @@ public class Map {
             for (int x_arr = 0; x_arr < toLoad[y_arr].length; x_arr++) {
 
                 int indexSp = toLoad[y_arr][x_arr];
-                int XTextPos;
-                int yTextPos;
+                if (indexSp > 0) {
+                    int XTextPos;
+                    int yTextPos;
 
-                Vertex leftUpVertex;
-                Vertex leftDownVertex;
-                Vertex rightUpVertex;
-                Vertex rightDownVertex;
+                    Vertex leftUpVertex;
+                    Vertex leftDownVertex;
+                    Vertex rightUpVertex;
+                    Vertex rightDownVertex;
 
-                int luXincr = 0;
-                int luYincr = 0;
-                int ldXincr = 0;
-                int ldYincr = 0;
-                int rdXincr = 0;
-                int rdYincr = 0;
-                int ruXincr = 0;
-                int ruYincr = 0;
+                    int luXincr = 0;
+                    int luYincr = 0;
+                    int ldXincr = 0;
+                    int ldYincr = 0;
+                    int rdXincr = 0;
+                    int rdYincr = 0;
+                    int ruXincr = 0;
+                    int ruYincr = 0;
 
-                if (indexSp < 0) { // With Horizontal rotation case
-                    indexSp = indexSp << 24;
-                    indexSp = Integer.reverseBytes(indexSp);
+                    if (indexSp < 0) { // With Horizontal rotation case
+                        indexSp = indexSp << 24;
+                        indexSp = Integer.reverseBytes(indexSp);
 
-                    luXincr = 1;
-                    ldXincr = 1;
-                    ldYincr = 1;
-                    rdYincr = 1;
+                        luXincr = 1;
+                        ldXincr = 1;
+                        ldYincr = 1;
+                        rdYincr = 1;
 
-                } else if (indexSp > LAST_TILESET) { // With vertical rotation case
-                    indexSp = indexSp << 24;
-                    indexSp = Integer.reverseBytes(indexSp);
+                    } else if (indexSp > LAST_TILESET) { // With vertical rotation case
+                        indexSp = indexSp << 24;
+                        indexSp = Integer.reverseBytes(indexSp);
 
-                    luYincr = 1;
-                    ruXincr = 1;
-                    ruYincr = 1;
-                    rdXincr = 1;
+                        luYincr = 1;
+                        ruXincr = 1;
+                        ruYincr = 1;
+                        rdXincr = 1;
 
-                } else { // Normal case
-                    ruXincr = 1;
-                    rdXincr = 1;
-                    rdYincr = 1;
-                    ldYincr = 1;
+                    } else { // Normal case
+                        ruXincr = 1;
+                        rdXincr = 1;
+                        rdYincr = 1;
+                        ldYincr = 1;
 
+                    }
+                    
+                    indexSp--;
+                    Validate.isTrue(indexSp >= 0);
+
+                    XTextPos = indexSp & 63;
+                    yTextPos = ((indexSp - XTextPos) / 64) << TILE_BIT_SHIFT;
+                    XTextPos *= TILE_SIZE;
+                    int xTilePos = x_arr + xBegin;
+                    int yTilePos = y_arr + yBegin;
+                    //         System.out.print("\tx:" + xTilePos + "-y:" + yTilePos);
+
+                    leftUpVertex = new Vertex(
+                            new Vector2f(xTilePos << TILE_BIT_SHIFT, yTilePos << TILE_BIT_SHIFT),
+                            new Vector2f(XTextPos + (luXincr << TILE_BIT_SHIFT), yTextPos + (luYincr << TILE_BIT_SHIFT))
+                    );
+
+                    leftDownVertex = new Vertex(
+                            new Vector2f(xTilePos << TILE_BIT_SHIFT, (yTilePos + 1) << TILE_BIT_SHIFT),
+                            new Vector2f(XTextPos + (ldXincr << TILE_BIT_SHIFT), yTextPos + (ldYincr << TILE_BIT_SHIFT))
+                    );
+
+                    rightUpVertex = new Vertex(
+                            new Vector2f((xTilePos + 1) << TILE_BIT_SHIFT, yTilePos << TILE_BIT_SHIFT),
+                            new Vector2f(XTextPos + (ruXincr << TILE_BIT_SHIFT), yTextPos + (ruYincr << TILE_BIT_SHIFT))
+                    );
+
+                    rightDownVertex = new Vertex(
+                            new Vector2f((xTilePos + 1) << TILE_BIT_SHIFT, (yTilePos + 1) << TILE_BIT_SHIFT), // Position
+                            new Vector2f(XTextPos + (rdXincr << TILE_BIT_SHIFT), yTextPos + (rdYincr << TILE_BIT_SHIFT)) // Texture position
+                    );
+
+                    verticies.add(leftUpVertex);
+                    verticies.add(rightUpVertex);
+                    verticies.add(rightDownVertex);
+                    verticies.add(leftDownVertex);
                 }
-                indexSp--;
 
-                XTextPos = (indexSp % 64);
-                yTextPos = ((indexSp - XTextPos) / 64) * TILE_SIZE;
-                XTextPos *= TILE_SIZE;
-                int xTilePos = x_arr + xBegin ;
-                int yTilePos = y_arr + yBegin;
-       //         System.out.print("\tx:" + xTilePos + "-y:" + yTilePos);
-
-                leftUpVertex = new Vertex(
-                        new Vector2f(xTilePos * TILE_SIZE, yTilePos * TILE_SIZE),
-                        new Vector2f(XTextPos + luXincr * TILE_SIZE, yTextPos + luYincr * TILE_SIZE)
-                );
-
-                leftDownVertex = new Vertex(
-                        new Vector2f(xTilePos * TILE_SIZE, (yTilePos + 1) * TILE_SIZE),
-                        new Vector2f(XTextPos + ldXincr * TILE_SIZE, yTextPos + ldYincr * TILE_SIZE)
-                );
-
-                rightUpVertex = new Vertex(
-                        new Vector2f((xTilePos + 1) * TILE_SIZE, yTilePos * TILE_SIZE),
-                        new Vector2f(XTextPos + ruXincr * TILE_SIZE, yTextPos + ruYincr * TILE_SIZE)
-                );
-
-                rightDownVertex = new Vertex(
-                        new Vector2f((xTilePos + 1) * TILE_SIZE, (yTilePos + 1) * TILE_SIZE), // Position
-                        new Vector2f(XTextPos + rdXincr * TILE_SIZE, yTextPos + rdYincr * TILE_SIZE) // Texture position
-                );
-
-                verticies.add(leftUpVertex);
-                verticies.add(rightUpVertex);
-                verticies.add(rightDownVertex);
-                verticies.add(leftDownVertex);
             }
         }
         return verticies;
@@ -239,7 +245,10 @@ public class Map {
     private final ConstTexture mTexture;
 
     public static final int NB_FILTERS = 7;
+
     public static final int TILE_SIZE = 16;
+    private static final int TILE_BIT_SHIFT = 4;
+
     public static final int LAST_TILESET = 8064;
 
     public enum LayerType {
