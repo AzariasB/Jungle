@@ -1,4 +1,3 @@
-
 package systems;
 
 import com.artemis.Aspect;
@@ -11,6 +10,7 @@ import com.artemis.systems.EntityProcessingSystem;
 import com.artemis.utils.ImmutableBag;
 import components.AIMonsterComponent;
 import components.AIPetComponent;
+import components.DamageMaker;
 import components.HitBox;
 import components.Transformation;
 import graphics.GraphicEngine;
@@ -38,6 +38,8 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
     ComponentMapper<AIPetComponent> aipetm;
     @Mapper
     ComponentMapper<AIMonsterComponent> monsterm;
+    @Mapper
+    ComponentMapper<DamageMaker> damagem;
 
     private final GraphicEngine mGraphicEngine;
     private Text mTmpText;
@@ -62,7 +64,7 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
         mTmpText = new Text();
         mTmpText.setFont(font);
         mTmpText.setCharacterSize(24);
-        
+
         mTmpRectShape = new RectangleShape();
         mTmpRectShape.setFillColor(Color.BLACK);
 
@@ -133,15 +135,21 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
          */
         HitBox hitbox = hitboxm.getSafe(entity);
         if (hitbox != null) {
-            Transformable transformable = transm.get(entity).getTransformable();
-            FloatRect rhb = hitbox.moveCopy(transformable.getPosition());
-            
-            mTmpRectShape.setPosition(new Vector2f(rhb.left, rhb.top));
-            mTmpRectShape.setSize(new Vector2f(rhb.width, rhb.height));
-            mTmpRectShape.setFillColor(new Color(0, 0, 0, 0));
-            mTmpRectShape.setOutlineColor(Color.RED);
-            mTmpRectShape.setOutlineThickness(1.f);
-            mGraphicEngine.getRenderTarget().draw(mTmpRectShape);
+            if (transm.has(entity)) {
+                Transformable transformable = transm.get(entity).getTransformable();
+                FloatRect rhb = hitbox.moveCopy(transformable.getPosition());
+
+                mTmpRectShape.setPosition(new Vector2f(rhb.left, rhb.top));
+                mTmpRectShape.setSize(new Vector2f(rhb.width, rhb.height));
+                if (damagem.has(entity)) {
+                    mTmpRectShape.setFillColor(new Color(255, 0, 0, 96));
+                } else {
+                    mTmpRectShape.setFillColor(new Color(0, 0, 0, 0));
+                }
+                mTmpRectShape.setOutlineColor(Color.RED);
+                mTmpRectShape.setOutlineThickness(1.f);
+                mGraphicEngine.getRenderTarget().draw(mTmpRectShape);
+            }
         }
 
         /*

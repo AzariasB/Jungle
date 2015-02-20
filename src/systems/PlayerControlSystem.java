@@ -14,11 +14,13 @@ import static components.Orientation.Direction.LEFT;
 import static components.Orientation.Direction.RIGHT;
 import static components.Orientation.Direction.UP;
 import components.Player;
+import components.Transformation;
 import components.Velocity;
-import content.Animations;
+import entities.EntityFactory;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.jsfml.system.Vector2f;
+import systems.helpers.AnimationHelper;
 
 /**
  *
@@ -37,13 +39,17 @@ public class PlayerControlSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<Orientation> om;
 
+    @Mapper
+    ComponentMapper<Transformation> tm;
 
     Deque<Direction> mForces;
+    private boolean isAttacking;
 
     @SuppressWarnings("unchecked")
     public PlayerControlSystem() {
         super(Aspect.getAspectForAll(
                 Player.class,
+                Transformation.class,
                 Velocity.class,
                 MultipleAnimations.class,
                 Orientation.class));
@@ -68,29 +74,21 @@ public class PlayerControlSystem extends EntityProcessingSystem {
             Orientation or = om.get(entity);
             Direction last = mForces.getLast();
             or.setDirection(last);
+            AnimationHelper.setAnimationByOrientation(ma, or);
 
-            float x = 0, y = 0;
+            vm.get(entity).setVelocity(or.getVector2f(VELOCITY));
+        }
 
-            switch (last) {
-                case UP:
-                    y -= VELOCITY;
-                    ma.setAnimation(Animations.GO_UP);
-                    break;
-                case LEFT:
-                    x -= VELOCITY;
-                    ma.setAnimation(Animations.GO_LEFT);
-                    break;
-                case DOWN:
-                    y += VELOCITY;
-                    ma.setAnimation(Animations.GO_DOWN);
-                    break;
-                case RIGHT:
-                    x += VELOCITY;
-                    ma.setAnimation(Animations.GO_RIGHT);
-                    break;
-            }
+        if (isAttacking) {
+            isAttacking = false;
 
-            vm.get(entity).setVelocity(new Vector2f(x, y));
+            Transformation t = tm.get(entity);
+            Vector2f pos = t.getTransformable().getPosition();
+
+            Orientation o = om.get(entity);
+            o.getVector2f();
+
+            EntityFactory.createDamageFromPlayer(world, pos, o);
         }
     }
 
@@ -128,6 +126,10 @@ public class PlayerControlSystem extends EntityProcessingSystem {
     @SuppressWarnings("empty-statement")
     public void stopRight() {
         while (mForces.removeFirstOccurrence(RIGHT));
+    }
+
+    public void attack() {
+        isAttacking = true;
     }
 
 }

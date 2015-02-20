@@ -13,7 +13,10 @@ import components.AbstractTextureRect;
 import components.AnimatedTextureRect;
 import components.Collector;
 import components.CollideWithMap;
+import components.DamageMaker;
+import components.Damageable;
 import components.DebugName;
+import components.Expiration;
 import components.FixedTextureRect;
 import components.HitBox;
 import components.MultipleAnimations;
@@ -25,6 +28,8 @@ import components.TextureComponent;
 import components.Transformation;
 import components.Velocity;
 import content.Animations;
+import content.Groups;
+import content.Masks;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsfml.graphics.ConstTexture;
@@ -61,8 +66,13 @@ public class EntityFactory {
         player.addComponent(new Player());
         player.addComponent(new Orientation(DOWN));
         player.addComponent(new Collector());
+        player.addComponent(new Damageable(Masks.DAMAGE_FROM_MONSTER | Masks.DAMAGE_FROM_NATURE));
+        
+
         player.addToWorld();
+
         world.getManager(TagManager.class).register("PLAYER", player);
+
         return player;
     }
 
@@ -76,7 +86,7 @@ public class EntityFactory {
         noixCoco.addComponent(new FixedTextureRect(new IntRect(0, 0, texSize.x, texSize.y)), ComponentType.getTypeFor(AbstractTextureRect.class));
         noixCoco.addComponent(new HitBox(new FloatRect(32, 32, 16, 16)));
         noixCoco.addToWorld();
-        world.getManager(GroupManager.class).add(noixCoco, "COLLECTABLE");
+        world.getManager(GroupManager.class).add(noixCoco, Groups.COLLECTABLES);
         return noixCoco;
     }
 
@@ -100,11 +110,11 @@ public class EntityFactory {
 
         coin.addComponent(new HitBox(new FloatRect(0, 0, 32, 32)));
         coin.addToWorld();
-        world.getManager(GroupManager.class).add(coin, "COLLECTABLE");
+        world.getManager(GroupManager.class).add(coin, Groups.COLLECTABLES);
         return coin;
     }
 
-    public static void createPet(AppContent appContent, World world, float x, float y) {
+    public static Entity createPet(AppContent appContent, World world, float x, float y) {
         Entity pet = world.createEntity();
         pet.addComponent(new DebugName("A pet"));
         pet.addComponent(new Transformation(x, y));
@@ -124,10 +134,15 @@ public class EntityFactory {
         pet.addComponent(new HitBox(new FloatRect(0, 5, 24, 16)));
         pet.addComponent(new AIPetComponent());
         pet.addComponent(new Orientation());
+
+        pet.addComponent(new Damageable(Masks.DAMAGE_FROM_ALL));
+
         pet.addToWorld();
+
+        return pet;
     }
 
-    public static void createMonster(AppContent appContent, World world, float x, float y) {
+    public static Entity createMonster(AppContent appContent, World world, float x, float y) {
         Entity monster = world.createEntity();
         monster.addComponent(new DebugName("A monster"));
         monster.addComponent(new Transformation(x, y));
@@ -152,11 +167,49 @@ public class EntityFactory {
         path.add(new Vector2f(x + 160, y));
         path.add(new Vector2f(x + 161, y + 32));
         monster.addComponent(new AIMonsterComponent(path));
+
+        monster.addComponent(new Damageable(Masks.DAMAGE_FROM_PLAYER | Masks.DAMAGE_FROM_NATURE));
+        
+
         monster.addToWorld();
+
+        return monster;
     }
 
     private static ConstTexture getTexture(AppContent appContent, String textureName) {
         return appContent.getGraphicEngine().getTexture(textureName);
+    }
+
+    public static Entity createDamageFromPlayer(World world, Vector2f pos, Orientation o) {
+        Entity damage = world.createEntity();
+
+        damage.addComponent(new Transformation(Vector2f.add(pos, o.getVector2f(32))));
+        damage.addComponent(new HitBox(new FloatRect(0, 0, 32, 32)));
+        damage.addComponent(new Expiration(50));
+        damage.addComponent(new DamageMaker(Masks.DAMAGE_FROM_PLAYER));
+        damage.addToWorld();
+
+        world.getManager(GroupManager.class).add(damage, Groups.DAMAGEABLES);
+
+        return damage;
+    }
+
+    public static Entity createFire(AppContent appContent, World world, float x, float y) {
+        Entity fire = world.createEntity();
+
+        fire.addComponent(new Transformation(x, y));
+        fire.addComponent(new TextureComponent(getTexture(appContent, "fire.png")));
+        AnimatedTextureRect anim = AnimatedTextureRect.createLinearAnimation(new IntRect(0, 0, 96, 96), 4, 500, true);
+        fire.addComponent(anim, ComponentType.getTypeFor(AbstractTextureRect.class));
+        fire.addComponent(anim);
+        fire.addComponent(new HitBox(new FloatRect(0, 0, 96, 96)));
+        fire.addComponent(new DamageMaker(Masks.DAMAGE_FROM_NATURE));
+
+        fire.addToWorld();
+
+        world.getManager(GroupManager.class).add(fire, Groups.DAMAGEABLES);
+
+        return fire;
     }
 
 }

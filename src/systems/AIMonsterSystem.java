@@ -127,7 +127,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
             case 5:
                 AIHelper.testPathProgress(monster, pos, 4);
                 // if player is near
-                if (DistanceHelper.fastDistance(pos, playerPos) < 16.f) {
+                if (DistanceHelper.fastDistance(pos, playerPos) < 10) {
                     monster.setState(6);
                 } else if (DistanceHelper.fastDistance(pos, playerPos) > 300) {
                     monster.setState(0);

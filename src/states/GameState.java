@@ -3,12 +3,10 @@ package states;
 import architecture.AbstractApplicationState;
 import architecture.AppStateEnum;
 import com.artemis.Entity;
-import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.managers.TeamManager;
-import com.sun.org.apache.xalan.internal.xsltc.cmdline.Transform;
 import components.Transformation;
 import entities.EntityFactory;
 import graphics.Camera;
@@ -27,7 +25,9 @@ import systems.AIMonsterSystem;
 import systems.AIPetSystem;
 import systems.AnimateTextRectSystem;
 import systems.CollectSystem;
+import systems.DamageSystem;
 import systems.DebugRenderingSystem;
+import systems.ExpirationSystem;
 import systems.MovemementCollideMapSystem;
 import systems.MovemementSystem;
 import systems.MultipleAnimationSystem;
@@ -85,6 +85,7 @@ public class GameState extends AbstractApplicationState {
         world.setManager(new TagManager());
         world.setManager(new TeamManager());
 
+        world.setSystem(new ExpirationSystem());
         world.setSystem(mPlayerControlSystem = new PlayerControlSystem());
         world.setSystem(new MovemementSystem());
         world.setSystem(new MovemementCollideMapSystem(getAppContent(), myMap));
@@ -95,6 +96,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mRenderingSystem = new RenderSpriteSystem(getGraphicEngine()), true);
         world.setSystem(new AnimateTextRectSystem());
         world.setSystem(new MultipleAnimationSystem());
+        world.setSystem(new DamageSystem());
 
         mEntityPlayer = EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
@@ -114,6 +116,8 @@ public class GameState extends AbstractApplicationState {
 //        EntityFactory.createPet(world, 50, 550);
 
         EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);
+
+        EntityFactory.createFire(getAppContent(), world, 312, 312);
 
         world.initialize();
     }
@@ -144,6 +148,9 @@ public class GameState extends AbstractApplicationState {
                     break;
                 case RIGHT:
                     mPlayerControlSystem.goRight();
+                    break;
+                case SPACE:
+                    mPlayerControlSystem.attack();
                     break;
             }
         } else if (e.type == Event.Type.KEY_RELEASED) {
@@ -176,6 +183,12 @@ public class GameState extends AbstractApplicationState {
 
         target.clear(new Color(64, 64, 64));
         // Drawing map
+
+        myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 64, 64);
+        mRenderingSystem.process();
+        myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);
+
+        // TODO : draw HUD && text if any
 
         Camera cam = getGraphicEngine().getCamera();
         cam.setTarget(mEntityPlayer.getComponent(Transformation.class).getTransformable().getPosition());

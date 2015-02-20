@@ -11,6 +11,7 @@ import com.artemis.utils.ImmutableBag;
 import components.Collector;
 import components.HitBox;
 import components.Transformation;
+import content.Groups;
 import systems.helpers.CollisionHelper;
 
 /**
@@ -40,7 +41,7 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
     protected void process(Entity collector) {
         GroupManager gm = world.getManager(GroupManager.class);
 
-        ImmutableBag<Entity> collectables = gm.getEntities("COLLECTABLE");
+        ImmutableBag<Entity> collectables = gm.getEntities(Groups.COLLECTABLES);
 
         for (int i = 0, s = collectables.size(); i < s; ++i) {
             Entity collectable = collectables.get(i);
@@ -58,5 +59,6 @@ public class CollectSystem extends IntervalEntityProcessingSystem {
             }
         }
     }
+
 
 }

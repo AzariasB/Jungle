@@ -46,6 +46,7 @@ public class AIPetSystem extends EntityProcessingSystem {
     private Vector2f playerPos;
     private final Map mMap;
     private FloatRect playerBox;
+    private Entity mPlayer;
 
 
     @SuppressWarnings("unchecked")
@@ -63,13 +64,10 @@ public class AIPetSystem extends EntityProcessingSystem {
 
     @Override
     protected void begin() {
-        Entity player = world.getManager(TagManager.class).getEntity("PLAYER");
-        if (player != null) {
-            playerPos = tm.getSafe(player).getTransformable().getPosition();
-            playerBox = hm.getSafe(player).getHitBox();
-        } else {
-            playerPos = new Vector2f(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
-            playerBox = FloatRect.EMPTY;
+        mPlayer = world.getManager(TagManager.class).getEntity("PLAYER");
+        if (mPlayer != null) {
+            playerPos = tm.getSafe(mPlayer).getTransformable().getPosition();
+            playerBox = hm.getSafe(mPlayer).getHitBox();
         }
     }
 
@@ -89,9 +87,11 @@ public class AIPetSystem extends EntityProcessingSystem {
 
         switch (currentState) {
             case 0: // Compute path to player
-                petCmpt.setOldPlayerPos(playerPos);
-
-                AIHelper.goTo(petCmpt, mMap, pos, hitbox, playerPos, 1);
+                vel.setVelocity(Vector2f.ZERO);
+                if (mPlayer != null) {
+                    petCmpt.setOldPlayerPos(playerPos);
+                    AIHelper.goTo(petCmpt, mMap, pos, hitbox, playerPos, 1);
+                }
                 break;
 
 
