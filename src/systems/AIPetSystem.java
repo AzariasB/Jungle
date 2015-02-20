@@ -10,13 +10,14 @@ import com.artemis.systems.EntityProcessingSystem;
 import components.AIPetComponent;
 import components.HitBox;
 import components.MultipleAnimations;
+import components.Orientation;
 import components.Transformation;
 import components.Velocity;
-import content.Animations;
-import java.util.List;
 import map.Map;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Vector2f;
+import systems.helpers.AIHelper;
+import systems.helpers.AnimationHelper;
 import systems.helpers.DistanceHelper;
 
 /**
@@ -39,6 +40,9 @@ public class AIPetSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<MultipleAnimations> mam;
 
+    @Mapper
+    ComponentMapper<Orientation> om;
+
     private Vector2f playerPos;
     private final Map mMap;
     private FloatRect playerBox;
@@ -51,7 +55,8 @@ public class AIPetSystem extends EntityProcessingSystem {
                 Velocity.class,
                 Transformation.class,
                 HitBox.class,
-                MultipleAnimations.class
+                MultipleAnimations.class,
+                Orientation.class
         ));
         mMap = map;
     }
@@ -76,6 +81,7 @@ public class AIPetSystem extends EntityProcessingSystem {
         Vector2f pos = t.getTransformable().getPosition();
         FloatRect hitbox = hm.get(entity).getHitBox();
         MultipleAnimations ma = mam.get(entity);
+        Orientation orientation = om.get(entity);
                 
         int currentState = petCmpt.getState();
 
@@ -83,52 +89,22 @@ public class AIPetSystem extends EntityProcessingSystem {
 
         switch (currentState) {
             case 0: // Compute path to player
-                List<Vector2f> path = mMap.computePath(
-                        pos.x,
-                        pos.y,
-                        playerPos.x,
-                        playerPos.y,
-                        hitbox.width + hitbox.left,
-                        hitbox.height + hitbox.top);
                 petCmpt.setOldPlayerPos(playerPos);
-                petCmpt.setPath(path);
-                petCmpt.setState(1);
+
+                AIHelper.goTo(petCmpt, mMap, pos, hitbox, playerPos, 1);
                 break;
 
 
             case 1: // Move to next tile
-                if (petCmpt.getPathIterator().hasNext()) {
-                    Vector2f next = petCmpt.getPathIterator().next();
-                    petCmpt.setGoal(next);
-                    Vector2f diff = Vector2f.sub(next, pos);
-                    float fact = 50 / ((float) Math.sqrt(diff.x * diff.x + diff.y * diff.y));
-
-                    if (diff.x > diff.y && diff.x > -diff.y) {// right
-                        ma.setAnimation(Animations.GO_RIGHT);
-                    } else if (-diff.x > diff.y && -diff.x > -diff.y) {// left
-                        ma.setAnimation(Animations.GO_LEFT);
-                    } else if (diff.y > 0) {// down
-                        ma.setAnimation(Animations.GO_DOWN);
-                    } else {// up
-                        ma.setAnimation(Animations.GO_UP);
-                    }
-
-                    vel.setVelocity(Vector2f.mul(diff, fact));
-
-                    petCmpt.setState(2);
-                } else {
-                    vel.setVelocity(Vector2f.ZERO);
-                    petCmpt.setState(0);
-                }
+                vel.setVelocity(AIHelper.followPath(petCmpt, pos, 2, 0, orientation));
+                AnimationHelper.setAnimationByOrientation(ma, orientation);
                 break;
 
             case 2: // Test if goal was reached
-                if (DistanceHelper.distance(pos, petCmpt.getGoal()) < 1) {
-                    petCmpt.setState(1);
-                }
+                AIHelper.testPathProgress(petCmpt, pos, 1);
+               
                 // if player moved a lot
-                Vector2f playerDiff = Vector2f.sub(playerPos, petCmpt.getOldPlayerPos());
-                if (Math.abs(playerDiff.x) + Math.abs(playerDiff.y) > 32) {
+                if (DistanceHelper.fastDistance(playerPos, petCmpt.getOldPlayerPos()) > 32) {
                     petCmpt.setState(0);
                 }
                 break;
