@@ -156,7 +156,7 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
                 }
             }
             if (aipet.getGoal() != null) {
-                drawCircle(Color.RED, aipet.getGoal());
+                drawCircle(Color.YELLOW, aipet.getGoal());
             }
             if (aipet.getOldPlayerPos() != null) {
                 drawCircle(Color.BLUE, aipet.getOldPlayerPos());
@@ -172,7 +172,7 @@ public class DebugRenderingSystem extends EntityProcessingSystem {
             /* Goal */
             if (monster.getPath() != null) {
                 for (Vector2f c : monster.getPath()) {
-                    drawCircle(Color.YELLOW, c, 2);
+                    drawCircle(Color.RED, c, 2);
                 }
             }
             if (monster.getGoal() != null) {

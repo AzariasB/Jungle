@@ -10,13 +10,14 @@ import com.artemis.systems.EntityProcessingSystem;
 import components.AIMonsterComponent;
 import components.HitBox;
 import components.MultipleAnimations;
+import components.Orientation;
 import components.Transformation;
 import components.Velocity;
-import content.Animations;
-import java.util.List;
 import map.Map;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Vector2f;
+import systems.helpers.AIHelper;
+import systems.helpers.AnimationHelper;
 import systems.helpers.DistanceHelper;
 
 /**
@@ -39,6 +40,9 @@ public class AIMonsterSystem extends EntityProcessingSystem {
     @Mapper
     ComponentMapper<MultipleAnimations> mam;
 
+    @Mapper
+    ComponentMapper<Orientation> om;
+
     private Vector2f playerPos;
     private final Map mMap;
     private FloatRect playerBox;
@@ -51,7 +55,8 @@ public class AIMonsterSystem extends EntityProcessingSystem {
                 Velocity.class,
                 Transformation.class,
                 HitBox.class,
-                MultipleAnimations.class
+                MultipleAnimations.class,
+                Orientation.class
         ));
         mMap = map;
     }
@@ -76,6 +81,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
         Vector2f pos = t.getTransformable().getPosition();
         FloatRect hitbox = hm.get(entity).getHitBox();
         MultipleAnimations ma = mam.get(entity);
+        Orientation orientation = om.get(entity);
                 
         int currentState = monster.getState();
 
@@ -85,15 +91,9 @@ public class AIMonsterSystem extends EntityProcessingSystem {
             case 0: // Idle state. Follow its idle path
                 if (monster.getIdlePathIterator().hasNext()) {
                     Vector2f next = monster.getIdlePathIterator().next();
-                    List<Vector2f> path = mMap.computePath(
-                            pos.x,
-                            pos.y,
-                            next.x,
-                            next.y,
-                            hitbox.width + hitbox.left,
-                            hitbox.height + hitbox.top);
-                    monster.setPath(path);
-                    monster.setState(1);
+
+                    AIHelper.goTo(monster, mMap, pos, hitbox, next, 1);
+
                 } else {
                     monster.resetIdlePathIterator();
                 }
@@ -101,51 +101,46 @@ public class AIMonsterSystem extends EntityProcessingSystem {
 
 
             case 1: // Move to next tile
-                if (monster.getPathIterator().hasNext()) {
-                    Vector2f next = monster.getPathIterator().next();
-                    monster.setGoal(next);
-                    Vector2f diff = Vector2f.sub(next, pos);
-                    float fact = 50 / ((float) Math.sqrt(diff.x * diff.x + diff.y * diff.y));
-
-                    if (diff.x > diff.y && diff.x > -diff.y) {// right
-                        ma.setAnimation(Animations.GO_RIGHT);
-                    } else if (-diff.x > diff.y && -diff.x > -diff.y) {// left
-                        ma.setAnimation(Animations.GO_LEFT);
-                    } else if (diff.y > 0) {// down
-                        ma.setAnimation(Animations.GO_DOWN);
-                    } else {// up
-                        ma.setAnimation(Animations.GO_UP);
-                    }
-
-                    vel.setVelocity(Vector2f.mul(diff, fact));
-
-                    monster.setState(2);
-                } else {
-                    vel.setVelocity(Vector2f.ZERO);
-                    monster.setState(0);
-                }
+                vel.setVelocity(AIHelper.followPath(monster, pos, 2, 0, orientation));
+                AnimationHelper.setAnimationByOrientation(ma, orientation);
                 break;
 
             case 2: // Test if goal was reached
-                if (DistanceHelper.distance(pos, monster.getGoal()) < 1) {
-                    monster.setState(1);
-                }
+                AIHelper.testPathProgress(monster, pos, 1);
                 // if player is near
-                if (DistanceHelper.distance(pos, playerPos) < 256) {
+                
+                if (DistanceHelper.distance(pos, playerPos) < 50000) {
                     monster.setState(3);
                 }
                 break;
 
             case 3: // chase player
-                List<Vector2f> path = mMap.computePath(
-                        pos.x,
-                        pos.y,
-                        playerPos.x,
-                        playerPos.y,
-                        hitbox.width + hitbox.left,
-                        hitbox.height + hitbox.top);
-                monster.setPath(path);
-                monster.setState(4);
+                monster.setOldPlayerPos(playerPos);
+                AIHelper.goTo(monster, mMap, pos, hitbox, playerPos, 4);
+                break;
+
+            case 4:
+                vel.setVelocity(AIHelper.followPath(monster, pos, 5, 6, orientation));
+                AnimationHelper.setAnimationByOrientation(ma, orientation);
+                break;
+
+            case 5:
+                AIHelper.testPathProgress(monster, pos, 4);
+                // if player is near
+                if (DistanceHelper.fastDistance(pos, playerPos) < 16.f) {
+                    monster.setState(6);
+                } else if (DistanceHelper.fastDistance(pos, playerPos) > 300) {
+                    monster.setState(0);
+                }
+                // if player moved a lot
+                if (DistanceHelper.fastDistance(playerPos, monster.getOldPlayerPos()) > 32) {
+                    monster.setState(3);
+                }
+                break;
+
+            case 6: // attack player
+                System.out.println("ATTACK!");
+                monster.setState(3);
                 break;
 
         }

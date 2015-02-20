@@ -114,9 +114,9 @@ public class EntityFactory {
 
         MultipleAnimations ma = new MultipleAnimations();
         ma.add(Animations.GO_LEFT, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 0, 24, 21), 4, 500, true));
-        ma.add(Animations.GO_UP, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 48, 21, 21), 4, 500, true));
-        ma.add(Animations.GO_RIGHT, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 24, 24, 21), 4, 500, true));
-        ma.add(Animations.GO_DOWN, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 72, 32, 32), 4, 500, true));
+        ma.add(Animations.GO_UP, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 42, 21, 21), 4, 500, true));
+        ma.add(Animations.GO_RIGHT, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 53, 24, 21), 4, 500, true));
+        ma.add(Animations.GO_DOWN, AnimatedTextureRect.createLinearAnimation(new IntRect(0, 64, 32, 32), 4, 500, true));
         ma.setAnimation(Animations.GO_LEFT);
         pet.addComponent(ma);
         pet.addComponent(ma, ComponentType.getTypeFor(AbstractTextureRect.class));
@@ -132,8 +132,7 @@ public class EntityFactory {
         monster.addComponent(new DebugName("A monster"));
         monster.addComponent(new Transformation(x, y));
         monster.addComponent(new Velocity());
-        //monster.addComponent(new RenderableSprite("monster.png", new IntRect(0, 0, 24, 36)));
-        //monster.addComponent(new SpriteAnimation(4, 500, true));
+
         monster.addComponent(new HitBox(new FloatRect(0, 5, 24, 31)));
         monster.addComponent(new Orientation());
 

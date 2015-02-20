@@ -1,6 +1,7 @@
 
 package components;
 
+import components.interfaces.AIPathFollower;
 import com.artemis.Component;
 import java.util.Iterator;
 import java.util.List;
@@ -9,7 +10,7 @@ import org.jsfml.system.Vector2f;
 /**
  *
  */
-public class AIPetComponent extends Component {
+public class AIPetComponent extends Component implements AIPathFollower {
 
     private int mState;
     private List<Vector2f> mPath;
