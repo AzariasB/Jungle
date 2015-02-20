@@ -38,14 +38,14 @@ public class Map {
         }
     }
 
-    public List<Vector2f> getCoins() {
-        ArrayList<Vector2f> myCoins = new ArrayList<>();
-        for (MapObject mObject : mObjects) {
-            if (mObject.getName().toLowerCase().equals("coin")) {
-                myCoins.add(mObject.getPosition());
+    public List<Vector2f> getObjectsByName(String objName) {
+        ArrayList<Vector2f> myObjects = new ArrayList<>();
+        for (MapObject mObj : mObjects) {
+            if (mObj.getName().toLowerCase().equals(objName.toLowerCase())) {
+                myObjects.add(mObj.getPosition());
             }
         }
-        return myCoins;
+        return myObjects;
     }
 
     public List<MapObject> getObject() {
@@ -59,7 +59,6 @@ public class Map {
     public void setLayers(List<Layer> myNewLayers) {
         mLayers = myNewLayers;
     }
-
 
     public boolean isHittingBlock(float x, float y, float width, float height) {
 
@@ -104,23 +103,25 @@ public class Map {
         int h = ((int) height + TILE_SIZE - 1) / TILE_SIZE;
 
         List<Vector2i> indexPath = PathFinding.compute(getCollisionLayer(), sx, sy, tx, ty, w, h);
-        List<Vector2f> path = new ArrayList<>(indexPath.size());
-
-        for (Vector2i ic : indexPath) {
-            path.add(new Vector2f(ic.x << TILE_BIT_SHIFT, ic.y << TILE_BIT_SHIFT));
+        List<Vector2f> path = new ArrayList<>();
+        if (indexPath != null) {
+            for (Vector2i ic : indexPath) {
+                path.add(new Vector2f(ic.x << TILE_BIT_SHIFT, ic.y << TILE_BIT_SHIFT));
+            }
         }
 
         return path;
     }
-/**
- * 
- * 
- * 
- * @param drawInIt the RenderTarget to draw in
- * @param position the left-bottom position of the view
- * @param height the height of the view
- * @param width the width of the view
- */
+
+    /**
+     *
+     *
+     *
+     * @param drawInIt the RenderTarget to draw in
+     * @param position the left-bottom position of the view
+     * @param height the height of the view
+     * @param width the width of the view
+     */
     public void render(GraphicEngine drawInIt, Vector2f position, int width, int height) {
         RenderStates render = new RenderStates(mTexture);
         for (Layer lay : mLayers) {
@@ -197,7 +198,7 @@ public class Map {
                         ldYincr = 1;
 
                     }
-                    
+
                     indexSp--;
                     Validate.isTrue(indexSp >= 0);
 

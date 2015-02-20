@@ -97,8 +97,8 @@ public class Layer implements TileTest {
     }
     private final List<Chunk> mChunks;
     private final Map.LayerType mFilter;
-    private final int MAP_WIDTH;
-    private final int MAP_HEIGHT;
+    public final int MAP_WIDTH;
+    public final int MAP_HEIGHT;
 
     private static final int CHUNK_SIZE = 16;
     private static final int MASK_CHUNK = 0xF;

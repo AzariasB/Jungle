@@ -101,21 +101,22 @@ public class GameState extends AbstractApplicationState {
         mEntityPlayer = EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
         /* Collectables */
-        EntityFactory.createNoixCoco(getAppContent(), world, 150, 350);
-        EntityFactory.createCoin(getAppContent(), world, 300, 400);
-        EntityFactory.createCoin(getAppContent(), world, 350, 400);
-        EntityFactory.createCoin(getAppContent(), world, 250, 400);
-        List<Vector2f> coins = myMap.getCoins();
+        List<Vector2f> coins = myMap.getObjectsByName("coin");
         for (Vector2f coin : coins) {
             EntityFactory.createCoin(getAppContent(), world, (int) coin.x, (int) coin.y);
         }
+        
+        List<Vector2f> sheeps = myMap.getObjectsByName("sheep");
+        for(Vector2f sheep : sheeps){
+            EntityFactory.createPet(getAppContent(), world, sheep.x, sheep.y);
+        }
+        
+        List<Vector2f> monsters = myMap.getObjectsByName("littleDragon");
+        for(Vector2f monster : monsters){
+            EntityFactory.createMonster(getAppContent(), world, monster.x, monster.y);
+        }
 
-//        EntityFactory.createPet(world, 50, 50);
-        EntityFactory.createPet(getAppContent(), world, 550, 550);
-//        EntityFactory.createPet(world, 550, 50);
-//        EntityFactory.createPet(world, 50, 550);
-
-        EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);
+       // EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);
 
         EntityFactory.createFire(getAppContent(), world, 312, 312);
 
