@@ -83,6 +83,10 @@ public class GraphicEngine {
     public void setCamera(Camera newCam) {
         mCamera = newCam;
     }
+    
+    public Camera getCamera(){
+        return this.mCamera;
+    }
 
     public Iterable<Event> getWindowEvents() {
         return mWindow.pollEvents();
@@ -94,8 +98,8 @@ public class GraphicEngine {
 
     public void beginRender() {
         mWindow.clear();
-        // TODO
-        //mWindow.setView(mCamera.getView());
+        mCamera.updateCamera();
+        mWindow.setView(mCamera.getView());
     }
 
     public void endRender() {

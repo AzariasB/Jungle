@@ -2,11 +2,14 @@ package states;
 
 import architecture.AbstractApplicationState;
 import architecture.AppStateEnum;
+import com.artemis.Entity;
 import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.managers.TeamManager;
+import com.sun.org.apache.xalan.internal.xsltc.cmdline.Transform;
+import components.Transformation;
 import entities.EntityFactory;
 import java.util.List;
 import louveteau.Main;
@@ -44,9 +47,7 @@ public class GameState extends AbstractApplicationState {
     private PlayerControlSystem mPlayerControlSystem;
     private RenderSpriteSystem mRenderingSystem;
     private DebugRenderingSystem mDebugRenderingSystem;
-
-    
-    
+    private Entity mEntityPlayer;
 
     @Override
     public AppStateEnum getStateId() {
@@ -70,15 +71,14 @@ public class GameState extends AbstractApplicationState {
         getAppContent().getOptions().setIfUnset("maps.filepath", "./assets/Maps/maps.tmx");
 
         /*
-        New Loading system : with loader class
-        */
+         New Loading system : with loader class
+         */
         Loader ld = new Loader(getAppContent().getOptions().get("maps.filepath"), getGraphicEngine());
         myMap = ld.getMap();
 
         /*
          World entities creation
          */
-
         world = new World();
         world.setManager(new GroupManager());
         world.setManager(new TagManager());
@@ -95,8 +95,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(new AnimateTextRectSystem());
         world.setSystem(new MultipleAnimationSystem());
 
-
-        EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
+        mEntityPlayer = EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
         /* Collectables */
         EntityFactory.createNoixCoco(getAppContent(), world, 150, 350);
@@ -104,8 +103,8 @@ public class GameState extends AbstractApplicationState {
         EntityFactory.createCoin(getAppContent(), world, 350, 400);
         EntityFactory.createCoin(getAppContent(), world, 250, 400);
         List<Vector2f> coins = myMap.getCoins();
-        for (int coin = 0; coin < coins.size(); coin++) {
-            EntityFactory.createCoin(getAppContent(), world, (int) coins.get(coin).x, (int) coins.get(coin).y);
+        for (Vector2f coin : coins) {
+            EntityFactory.createCoin(getAppContent(), world, (int) coin.x, (int) coin.y);
         }
 
 //        EntityFactory.createPet(world, 50, 50);
@@ -115,10 +114,8 @@ public class GameState extends AbstractApplicationState {
 
         EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);
 
-
         world.initialize();
     }
-
 
     @Override
     public void handleEvent(Event e) {
@@ -175,27 +172,22 @@ public class GameState extends AbstractApplicationState {
     @Override
     public void render() {
         final RenderTarget target = getGraphicEngine().getRenderTarget();
-        
+
         target.clear(new Color(64, 64, 64));
         // Drawing map
-      //  System.out.println(world.getSystem(EntitySystem.class).toString());
-        myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 16, 16);
-        mRenderingSystem.process();
-        myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);
-
-        // TODO : draw HUD && text if any
 
         
+        getGraphicEngine().getCamera().setTarget(mEntityPlayer.getComponent(Transformation.class).getTransformable().getPosition());
+        
+        myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 16, 16);
+        mRenderingSystem.process();
+        myMap.renderFg(getGraphicEngine(), new Vector2f(0, 0), 16, 16);
 
+        // TODO : draw HUD && text if any
         if (mDebugGraphics) {
             mDebugRenderingSystem.process();
         }
-        
+
     }
-
-    
-
-    
-
 
 }

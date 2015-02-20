@@ -12,13 +12,14 @@ public class Camera {
     
     public Camera(Vector2f startPosition,Vector2f size){
         mView = new View();
+        mTarget = new Vector2f(0, 0);
         mView.setCenter(startPosition);
         mView.setSize(size);
         
     }
     
-    public void setTarget(TargetAble newTarget){
-        this.mTarget = newTarget.getPosition();
+    public void setTarget(Vector2f newTarget){
+        this.mTarget = newTarget;
     }
     
     public void updateCamera(){
