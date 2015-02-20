@@ -18,6 +18,7 @@ import org.jsfml.graphics.Font;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.Texture;
+import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.WindowStyle;
@@ -31,7 +32,7 @@ public class GraphicEngine {
          */
         mTextures = new HashMap<>();
         mFonts = new HashMap<>();
-
+        mCamera = new Camera(Vector2f.ZERO, new Vector2f(screenWidht, screenHeight));
         mWindow = new RenderWindow();
 
         /*
@@ -42,6 +43,7 @@ public class GraphicEngine {
             style = WindowStyle.FULLSCREEN;
         }
         mWindow.create(new VideoMode(screenWidht, screenHeight), titre_fen, style);
+        mWindow.setView(mCamera.getView());
     }
 
     public GraphicEngine(Vector2i windowSize, String windowName, boolean fullscreenMode) {

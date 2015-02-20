@@ -2,6 +2,7 @@ package states;
 
 import architecture.AbstractApplicationState;
 import architecture.AppStateEnum;
+import com.artemis.EntitySystem;
 import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
@@ -174,9 +175,10 @@ public class GameState extends AbstractApplicationState {
     @Override
     public void render() {
         final RenderTarget target = getGraphicEngine().getRenderTarget();
-
+        
         target.clear(new Color(64, 64, 64));
         // Drawing map
+      //  System.out.println(world.getSystem(EntitySystem.class).toString());
         myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 16, 16);
         mRenderingSystem.process();
         myMap.renderFg(getGraphicEngine(),new Vector2f(0, 0),16,16);
