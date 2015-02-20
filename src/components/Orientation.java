@@ -59,6 +59,25 @@ public class Orientation extends Component {
         return Vector2f.mul(getVector2f(), factor);
     }
 
+    /**
+     * Get the angle in deegres
+     *
+     * @return Degree angle of the direction
+     */
+    public float getAngle() {
+        switch (mDirection) {
+            case UP:
+                return 0f;
+            case LEFT:
+                return -90f;
+            case DOWN:
+                return 180f;
+            case RIGHT:
+                return 90f;
+        }
+        return 0f;
+    }
+
     private static final Vector2f sVec2fUp = new Vector2f(0.f, -1.f);
     private static final Vector2f sVec2fDown = new Vector2f(0.f, 1.f);
     private static final Vector2f sVec2fLeft = new Vector2f(-1.f, 0.f);

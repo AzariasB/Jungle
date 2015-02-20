@@ -91,7 +91,7 @@ public class EntityFactory {
     }
 
 
-    public static Entity createCoin(AppContent appContent, World world, int x, int y) {
+    public static Entity createCoin(AppContent appContent, World world, float x, float y) {
         Entity coin = world.createEntity();
         coin.addComponent(new DebugName("A coin"));
         Transformation t = new Transformation(x, y);
@@ -210,6 +210,30 @@ public class EntityFactory {
         world.getManager(GroupManager.class).add(fire, Groups.DAMAGEABLES);
 
         return fire;
+    }
+
+    public static Entity createFireBall(AppContent appContent, World world, Vector2f pos, Orientation orientation) {
+        Entity fireBall = world.createEntity();
+
+        Transformation t = new Transformation(Vector2f.add(pos, orientation.getVector2f(32)));
+        t.getTransformable().setOrigin(32, 32);
+        t.getTransformable().setRotation(orientation.getAngle() - 90f);
+        //t.getTransformable().scale(.5f, .5f);
+        //t.getTransformable().setOrigin(0, 0);
+        fireBall.addComponent(t);
+        fireBall.addComponent(new TextureComponent(getTexture(appContent, "fire_ball.png")));
+        AnimatedTextureRect anim = AnimatedTextureRect.createLinearAnimation(new IntRect(0, 0, 64, 64), 5, 300, true);
+        fireBall.addComponent(anim, ComponentType.getTypeFor(AbstractTextureRect.class));
+        fireBall.addComponent(anim);
+        fireBall.addComponent(new HitBox(new FloatRect(-15, -15, 32, 32)));
+        fireBall.addComponent(new Velocity(orientation.getVector2f(100f)));
+        fireBall.addComponent(new DamageMaker(Masks.DAMAGE_FROM_MONSTER));
+
+        fireBall.addToWorld();
+
+        world.getManager(GroupManager.class).add(fireBall, Groups.DAMAGEABLES);
+
+        return fireBall;
     }
 
 }

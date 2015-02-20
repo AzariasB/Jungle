@@ -3,14 +3,16 @@ package components;
 
 import com.artemis.Component;
 import components.interfaces.AIPathFollower;
+import components.interfaces.AIWaitable;
 import java.util.Iterator;
 import java.util.List;
+import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
 
 /**
  *
  */
-public class AIMonsterComponent extends Component implements AIPathFollower {
+public class AIMonsterComponent extends Component implements AIPathFollower, AIWaitable {
 
     private int mState;
     private List<Vector2f> mPath;
@@ -19,6 +21,7 @@ public class AIMonsterComponent extends Component implements AIPathFollower {
     private Vector2f mOldPlayerPos;
     private final Iterable<Vector2f> mIdlePath;
     private Iterator<Vector2f> mIdlePathIterator;
+    private Clock mClock;
 
     /**
      *
@@ -28,6 +31,7 @@ public class AIMonsterComponent extends Component implements AIPathFollower {
         mIdlePath = idlePath;
         mState = 0;
         resetIdlePathIterator();
+        mClock = new Clock();
     }
 
     public final void resetIdlePathIterator() {
@@ -76,5 +80,14 @@ public class AIMonsterComponent extends Component implements AIPathFollower {
         return mPath;
     }
 
+    @Override
+    public void startTimer() {
+        mClock.restart();
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return mClock.getElapsedTime().asMilliseconds();
+    }
 
 }

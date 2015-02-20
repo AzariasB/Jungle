@@ -1,6 +1,7 @@
 
 package systems;
 
+import architecture.AppContent;
 import com.artemis.Aspect;
 import com.artemis.ComponentMapper;
 import com.artemis.Entity;
@@ -13,6 +14,7 @@ import components.MultipleAnimations;
 import components.Orientation;
 import components.Transformation;
 import components.Velocity;
+import entities.EntityFactory;
 import map.Map;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.system.Vector2f;
@@ -46,10 +48,11 @@ public class AIMonsterSystem extends EntityProcessingSystem {
     private Vector2f playerPos;
     private final Map mMap;
     private FloatRect playerBox;
+    private final AppContent mAppContent;
 
 
     @SuppressWarnings("unchecked")
-    public AIMonsterSystem(Map map) {
+    public AIMonsterSystem(Map map, AppContent appContent) {
         super(Aspect.getAspectForAll(
                 AIMonsterComponent.class,
                 Velocity.class,
@@ -59,6 +62,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
                 Orientation.class
         ));
         mMap = map;
+        mAppContent = appContent;
     }
 
     @Override
@@ -127,7 +131,7 @@ public class AIMonsterSystem extends EntityProcessingSystem {
             case 5:
                 AIHelper.testPathProgress(monster, pos, 4);
                 // if player is near
-                if (DistanceHelper.fastDistance(pos, playerPos) < 10) {
+                if (DistanceHelper.fastDistance(pos, playerPos) < 120) {
                     monster.setState(6);
                 } else if (DistanceHelper.fastDistance(pos, playerPos) > 300) {
                     monster.setState(0);
@@ -140,7 +144,11 @@ public class AIMonsterSystem extends EntityProcessingSystem {
 
             case 6: // attack player
                 System.out.println("ATTACK!");
-                monster.setState(3);
+                EntityFactory.createFireBall(mAppContent, world, pos, orientation);
+                AIHelper.startWaiting(monster, 7);
+                break;
+            case 7:
+                AIHelper.updateWaiting(monster, 1000, 3);
                 break;
 
         }

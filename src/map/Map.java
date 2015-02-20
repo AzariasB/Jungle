@@ -41,7 +41,8 @@ public class Map {
     public List<Vector2f> getObjectsByName(String objName) {
         ArrayList<Vector2f> myObjects = new ArrayList<>();
         for (MapObject mObj : mObjects) {
-            if (mObj.getName().toLowerCase().equals(objName.toLowerCase())) {
+            if (mObj.getName() != null
+                    && mObj.getName().toLowerCase().equals(objName.toLowerCase())) {
                 myObjects.add(mObj.getPosition());
             }
         }

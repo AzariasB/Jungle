@@ -1,7 +1,8 @@
 package systems.helpers;
 
-import components.interfaces.AIPathFollower;
 import components.Orientation;
+import components.interfaces.AIPathFollower;
+import components.interfaces.AIWaitable;
 import java.util.Iterator;
 import java.util.List;
 import map.Map;
@@ -69,6 +70,17 @@ public class AIHelper {
     public static void testPathProgress(AIPathFollower pathFollower, Vector2f currentPosition, int stateToContinueFollowingPath) {
         if (DistanceHelper.fastDistance(currentPosition, pathFollower.getGoal()) < 2) {
             pathFollower.setState(stateToContinueFollowingPath);
+        }
+    }
+
+    public static void startWaiting(AIWaitable waiter, int stateWait) {
+        waiter.startTimer();
+        waiter.setState(stateWait);
+    }
+
+    public static void updateWaiting(AIWaitable waiter, int timeToWait, int stateWhenWaitingFinish) {
+        if (waiter.getElapsedTime() >= timeToWait) {
+            waiter.setState(stateWhenWaitingFinish);
         }
     }
 

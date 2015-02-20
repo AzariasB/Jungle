@@ -7,6 +7,7 @@ import com.artemis.World;
 import com.artemis.managers.GroupManager;
 import com.artemis.managers.TagManager;
 import com.artemis.managers.TeamManager;
+import components.Orientation;
 import components.Transformation;
 import entities.EntityFactory;
 import graphics.Camera;
@@ -92,7 +93,7 @@ public class GameState extends AbstractApplicationState {
         world.setSystem(mDebugRenderingSystem = new DebugRenderingSystem(getGraphicEngine()), true);
         world.setSystem(new CollectSystem(getAppContent()));
         world.setSystem(new AIPetSystem(myMap));
-        world.setSystem(new AIMonsterSystem(myMap));
+        world.setSystem(new AIMonsterSystem(myMap, getAppContent()));
         world.setSystem(mRenderingSystem = new RenderSpriteSystem(getGraphicEngine()), true);
         world.setSystem(new AnimateTextRectSystem());
         world.setSystem(new MultipleAnimationSystem());
@@ -103,7 +104,7 @@ public class GameState extends AbstractApplicationState {
         /* Collectables */
         List<Vector2f> coins = myMap.getObjectsByName("coin");
         for (Vector2f coin : coins) {
-            EntityFactory.createCoin(getAppContent(), world, (int) coin.x, (int) coin.y);
+            EntityFactory.createCoin(getAppContent(), world, coin.x, coin.y);
         }
         
         List<Vector2f> sheeps = myMap.getObjectsByName("sheep");
@@ -153,6 +154,10 @@ public class GameState extends AbstractApplicationState {
                 case SPACE:
                     mPlayerControlSystem.attack();
                     break;
+                case F:
+                    Vector2f pos = mEntityPlayer.getComponent(Transformation.class).getPosition();
+                    Orientation or = mEntityPlayer.getComponent(Orientation.class);
+                    EntityFactory.createFireBall(getAppContent(), world, pos, or);
             }
         } else if (e.type == Event.Type.KEY_RELEASED) {
             switch (e.asKeyEvent().key) {
