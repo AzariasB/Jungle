@@ -11,6 +11,7 @@ import com.artemis.managers.TeamManager;
 import com.sun.org.apache.xalan.internal.xsltc.cmdline.Transform;
 import components.Transformation;
 import entities.EntityFactory;
+import graphics.Camera;
 import java.util.List;
 import louveteau.Main;
 import map.Loader;
@@ -176,12 +177,15 @@ public class GameState extends AbstractApplicationState {
         target.clear(new Color(64, 64, 64));
         // Drawing map
 
+        Camera cam = getGraphicEngine().getCamera();
+        cam.setTarget(mEntityPlayer.getComponent(Transformation.class).getTransformable().getPosition());
         
-        getGraphicEngine().getCamera().setTarget(mEntityPlayer.getComponent(Transformation.class).getTransformable().getPosition());
-        
-        myMap.render(getGraphicEngine(), new Vector2f(15.4f, 15.3f), 16, 16);
+       // Vector2f camPos = new Vector2f(cam.getTopLeft().x/16 + 1,cam.getTopLeft().y/16 + 1);
+       // System.out.println(cam.getView().getSize().x);
+        myMap.render(getGraphicEngine(), cam.getTopLeft() , (int)(cam.getView().getSize().x*1.5), (int)(cam.getView().getSize().y*1.5 ));
+
         mRenderingSystem.process();
-        myMap.renderFg(getGraphicEngine(), new Vector2f(0, 0), 16, 16);
+        myMap.renderFg(getGraphicEngine(), cam.getTopLeft(),(int)(cam.getView().getSize().x*1.5) , (int)(cam.getView().getSize().y*1.5) ) ;
 
         // TODO : draw HUD && text if any
         if (mDebugGraphics) {

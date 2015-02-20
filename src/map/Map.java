@@ -121,7 +121,7 @@ public class Map {
  * @param height the height of the view
  * @param width the width of the view
  */
-    public void render(GraphicEngine drawInIt, Vector2f position, int height, int width) {
+    public void render(GraphicEngine drawInIt, Vector2f position, int width, int height) {
         RenderStates render = new RenderStates(mTexture);
         for (Layer lay : mLayers) {
             if (mLayers.indexOf(lay) < LayerType.FOREGROUND.getIndex()) {

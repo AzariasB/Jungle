@@ -35,10 +35,11 @@ public class Layer implements TileTest {
      * @param height The height of the view
      */
     public void drawYourSelf(GraphicEngine displayer, RenderStates states, Vector2f position, int width, int height) {
-        for (int yChunckIndex = (int) position.y; yChunckIndex < (int) position.y + height; yChunckIndex += 16) {
-            for (int xChunkIndex = (int) position.x; xChunkIndex < (int) position.x + width; xChunkIndex += 16) {
+        position = new Vector2f( ((int)position.x) >> MAGIC_CHUNK, ((int)position.y) >> MAGIC_CHUNK);
+        for (int yChunckIndex = (int) position.y; yChunckIndex < (int) position.y + (height >> MAGIC_CHUNK ); yChunckIndex += CHUNK_SIZE) {
+            for (int xChunkIndex = (int) position.x; xChunkIndex < (int) position.x + (width >> MAGIC_CHUNK ); xChunkIndex += CHUNK_SIZE) {
                 int chunckIndex = (xChunkIndex >> MAGIC_CHUNK) + ((yChunckIndex >> MAGIC_CHUNK) * ((MAP_WIDTH >> MAGIC_CHUNK ) + 1));
-                if (chunckIndex < mChunks.size()) {
+                if (chunckIndex < mChunks.size() && chunckIndex >= 0 ) {
                     mChunks.get(chunckIndex).drawYourVerticies(displayer, states);
                 }
             }
