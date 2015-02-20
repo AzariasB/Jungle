@@ -192,7 +192,11 @@ public class GameState extends AbstractApplicationState {
         // TODO : draw HUD && text if any
 
         Camera cam = getGraphicEngine().getCamera();
-        cam.setTarget(mEntityPlayer.getComponent(Transformation.class).getTransformable().getPosition());
+        Transformation compo = mEntityPlayer.getComponent(Transformation.class);
+        if(compo != null){
+            cam.setTarget(compo.getTransformable().getPosition());
+        }
+        
         
        // Vector2f camPos = new Vector2f(cam.getTopLeft().x/16 + 1,cam.getTopLeft().y/16 + 1);
        // System.out.println(cam.getView().getSize().x);
