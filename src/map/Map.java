@@ -38,12 +38,12 @@ public class Map {
         }
     }
 
-    public List<Vector2f> getObjectsByName(String objName) {
-        ArrayList<Vector2f> myObjects = new ArrayList<>();
+    public List<MapObject> getObjectsByName(String objName) {
+        ArrayList<MapObject> myObjects = new ArrayList<>();
         for (MapObject mObj : mObjects) {
             if (mObj.getName() != null
                     && mObj.getName().toLowerCase().equals(objName.toLowerCase())) {
-                myObjects.add(mObj.getPosition());
+                myObjects.add(mObj);
             }
         }
         return myObjects;

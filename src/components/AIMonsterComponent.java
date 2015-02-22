@@ -43,27 +43,33 @@ public class AIMonsterComponent extends Component implements AIPathFollower, AIW
     }
 
 
+    @Override
     public int getState() {
         return mState;
     }
 
+    @Override
     public void setState(int state) {
         mState = state;
     }
 
+    @Override
     public void setPath(List<Vector2f> path) {
         mPath = path;
         mPit = path.iterator();
     }
 
+    @Override
     public Iterator<Vector2f> getPathIterator() {
         return mPit;
     }
 
+    @Override
     public void setGoal(Vector2f goal) {
         mGoal = goal;
     }
 
+    @Override
     public Vector2f getGoal() {
         return mGoal;
     }

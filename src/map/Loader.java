@@ -12,6 +12,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import java.util.zip.Inflater;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
@@ -43,9 +44,9 @@ public class Loader {
 
         NodeList nl = docEle.getElementsByTagName("objectgroup");
         if (nl != null && nl.getLength() > 0) {
-           
+
             Element el = (Element) nl.item(0);
-            List<MapObject> mapObjts =  readObjects(el);
+            List<MapObject> mapObjts = readObjects(el);
             mMap.setObjects(mapObjts);
         }
 
@@ -58,6 +59,19 @@ public class Loader {
             }
             mMap.setLayers(mapLayers);
         }
+    }
+
+    private void readTMX() {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document dom = db.parse(mSource);
+            parseDocument(dom);
+
+        } catch (ParserConfigurationException | SAXException | IOException | NullPointerException ex) {
+            System.err.println("Exception lors de l'ouverture de la carte : " + ex);
+        }
+
     }
 
     private List<MapObject> readObjects(Element objgroup) {
@@ -101,17 +115,17 @@ public class Loader {
             // Decompress the bytes
             Inflater decompresser = new Inflater();
             decompresser.setInput(decode, 0, decode.length);
-            byte[] result = new byte[width*height*4];
+            byte[] result = new byte[width * height * 4];
             int resultLength = decompresser.inflate(result);
             decompresser.end();
 
             // Little endian ordering
             ByteBuffer bb = ByteBuffer.wrap(result);
             bb.order(ByteOrder.BIG_ENDIAN);
-            
+
             //Turn into int buffer
             IntBuffer res = bb.asIntBuffer();
-            
+
             // Annnnd finally, we have our array
             return new Layer(IntbufferToInarray(width, height, res), lType);
 
@@ -125,6 +139,63 @@ public class Loader {
     private MapObject readWithProprieties(Node objecWithProp) {
         MapObject obj = readWithoutProprieties(objecWithProp);
         obj.setProprieties(getProprieties((Element) objecWithProp));
+        obj.setPath(getPath((Element) objecWithProp));
+        return obj;
+    }
+
+    private int[][] IntbufferToInarray(int width, int height, IntBuffer toTransform) {
+        int[][] toR = new int[height][width];
+        try {
+            for (int i = 0; i <= height; i++) {
+                for (int j = 0; j < width && toTransform.capacity() > (i * width + j); j++) {
+                    toR[i][j] = Integer.reverseBytes(toTransform.get(i * width + j));
+                }
+            }
+        } catch (BufferOverflowException ex) {
+            System.out.println(" Erreur lors de la transformation de la map : " + ex);
+        }
+
+        return toR;
+    }
+
+    /**
+     * Read the simplest informations of each objects : the position, the id and
+     * if any other attributes, put them in the object
+     *
+     * @param objcLess the node to read
+     * @return the object with the attributes informations readed
+     */
+    private MapObject readWithoutProprieties(Node objcLess) {
+        MapObject obj;
+        // Basic attributes
+        NamedNodeMap attr = objcLess.getAttributes();
+        int id = Integer.parseInt(attr.getNamedItem("id").getTextContent());
+
+        int width = 0;
+        int height = 0;
+        if (attr.getNamedItem("width") != null) {
+            width = Integer.parseInt(attr.getNamedItem("width").getTextContent());
+        }
+        if (attr.getNamedItem("height") != null) {
+            height = Integer.parseInt(attr.getNamedItem("height").getTextContent());
+        }
+
+        float x = Float.parseFloat(attr.getNamedItem("x").getTextContent());
+        float y = Float.parseFloat(attr.getNamedItem("y").getTextContent());
+
+        int rotation = 0;
+        String name = "";
+        String type = "";
+        if (attr.getNamedItem("rotation") != null) {
+            rotation = Integer.parseInt(attr.getNamedItem("rotation").getTextContent());
+        }
+        if (attr.getNamedItem("name") != null) {
+            name = attr.getNamedItem("name").getTextContent();
+        }
+        if (attr.getNamedItem("type") != null) {
+            type = attr.getNamedItem("type").getTextContent();
+        }
+        obj = new MapObject(name, type, id, width, height, new Vector2f(x, y), null);
 
         return obj;
     }
@@ -140,74 +211,38 @@ public class Loader {
         return myPropreties;
     }
 
-    private int[][] IntbufferToInarray(int width, int height, IntBuffer toTransform) {
-        int[][] toR = new int[height][width];
-        try {
-            for (int i = 0; i <= height; i++) {
-                for (int j = 0; j < width && toTransform.capacity() > (i * width + j); j++) {
-                    toR[i][j] = Integer.reverseBytes(toTransform.get(i*width + j));
-                }
-            }
-        } catch (BufferOverflowException ex) {
-            System.out.println(" Erreur lors de la transformation de la map : " + ex);
+    private List<Vector2f> getPath(Element objectWithPath) {
+        NodeList nodes = objectWithPath.getElementsByTagName("polyline");
+
+        if (nodes.getLength() == 0) {
+            nodes = objectWithPath.getElementsByTagName("polygon");
         }
 
-        return toR;
+        if (nodes.getLength() != 0) {
+            return pointsToVector(nodes.item(0).getAttributes().getNamedItem("points").getTextContent());
+        }
+
+        return new ArrayList<>();
     }
 
-    private MapObject readWithoutProprieties(Node objcLess) {
-        MapObject obj;
-        // Basic attributes
-        NamedNodeMap attr = objcLess.getAttributes();
-        int id = Integer.parseInt(attr.getNamedItem("id").getTextContent());
-        int width = Integer.parseInt(attr.getNamedItem("width").getTextContent());
-        int height = Integer.parseInt(attr.getNamedItem("height").getTextContent());
-
-        float x = Float.parseFloat(attr.getNamedItem("x").getTextContent());
-        float y = Float.parseFloat(attr.getNamedItem("y").getTextContent());
-
-        if (objcLess.getAttributes().getLength() == 5) {
-            //Only the 5 necessary attributes
-
-            obj = new MapObject(id, width, height, new Vector2f(x, y));
-        } else {
-            //More than 5 attributes ...
-            int rotation = 0;
-            String name = "";
-            String type = "";
-            if (attr.getNamedItem("rotation") != null) {
-                rotation = Integer.parseInt(attr.getNamedItem("rotation").getTextContent());
+    private List<Vector2f> pointsToVector(String points) {
+        ArrayList<Vector2f> myPoints = new ArrayList<>();
+        Scanner scan = new Scanner(points);
+        scan.useDelimiter(",| ");
+        int x, y;
+        while (scan.hasNextInt()) {
+            x = scan.nextInt();
+            if (scan.hasNextInt()) {
+                y = scan.nextInt();
+            } else {
+                y = 0;
             }
-            if (attr.getNamedItem("name") != null) {
-                name = attr.getNamedItem("name").getTextContent();
-            }
-            if (attr.getNamedItem("type") != null) {
-                type = attr.getNamedItem("type").getTextContent();
-            }
-            obj = new MapObject(name, type, id, width, height, new Vector2f(x, y), null);
-
+            Vector2f coord = new Vector2f(x, y);
+            myPoints.add(coord);
         }
-        return obj;
-    }
-
-    private void readTMX() {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            try {
-                DocumentBuilder db = dbf.newDocumentBuilder();
-                Document dom = db.parse(mSource);
-                parseDocument(dom);
-
-            } catch (ParserConfigurationException | SAXException | IOException ex) {
-                System.err.println("Exception lors de l'ouverture de la carte : " + ex);
-            }
-
-        } catch (Exception ex) {
-            System.err.println("Exception lors de l'ouverture du fichier : " + mSource + " - Exception : " + ex);
-        }
-
+        return myPoints;
     }
 
     private final String mSource;
-    private Map mMap;
+    private final Map mMap;
 }

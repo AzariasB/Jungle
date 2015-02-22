@@ -15,6 +15,7 @@ import java.util.List;
 import louveteau.Main;
 import map.Loader;
 import map.Map;
+import map.MapObject;
 import org.jsfml.audio.Music;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderTarget;
@@ -102,19 +103,19 @@ public class GameState extends AbstractApplicationState {
         mEntityPlayer = EntityFactory.createPlayer(getAppContent(), world, myMap.getSpawnPoint().x, myMap.getSpawnPoint().y);
 
         /* Collectables */
-        List<Vector2f> coins = myMap.getObjectsByName("coin");
-        for (Vector2f coin : coins) {
-            EntityFactory.createCoin(getAppContent(), world, coin.x, coin.y);
+        List<MapObject> coins = myMap.getObjectsByName("coin");
+        for (MapObject coin : coins) {
+            EntityFactory.createCoin(getAppContent(), world, coin.getPosition().x, coin.getPosition().y);
         }
         
-        List<Vector2f> sheeps = myMap.getObjectsByName("sheep");
-        for(Vector2f sheep : sheeps){
-            EntityFactory.createPet(getAppContent(), world, sheep.x, sheep.y);
+        List<MapObject> sheeps = myMap.getObjectsByName("sheep");
+        for(MapObject sheep : sheeps){
+            EntityFactory.createPet(getAppContent(), world, sheep.getPosition().x, sheep.getPosition().y);
         }
         
-        List<Vector2f> monsters = myMap.getObjectsByName("littleDragon");
-        for(Vector2f monster : monsters){
-            EntityFactory.createMonster(getAppContent(), world, monster.x, monster.y);
+        List<MapObject> monsters = myMap.getObjectsByName("littleDragon");
+        for(MapObject monster : monsters){
+            EntityFactory.createMonster(getAppContent(), world, monster.getPosition().x, monster.getPosition().y,monster.getPath());
         }
 
        // EntityFactory.createMonster(getAppContent(), world, 288 + 288, 96);

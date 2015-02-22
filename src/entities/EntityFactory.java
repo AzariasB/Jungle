@@ -142,7 +142,7 @@ public class EntityFactory {
         return pet;
     }
 
-    public static Entity createMonster(AppContent appContent, World world, float x, float y) {
+    public static Entity createMonster(AppContent appContent, World world, float x, float y,List<Vector2f> path) {
         Entity monster = world.createEntity();
         monster.addComponent(new DebugName("A monster"));
         monster.addComponent(new Transformation(x, y));
@@ -162,10 +162,6 @@ public class EntityFactory {
         monster.addComponent(ma);
         monster.addComponent(ma, ComponentType.getTypeFor(AbstractTextureRect.class));
 
-        List<Vector2f> path = new ArrayList<>();
-        path.add(new Vector2f(x, y));
-        path.add(new Vector2f(x + 160, y));
-        path.add(new Vector2f(x + 161, y + 32));
         monster.addComponent(new AIMonsterComponent(path));
 
         monster.addComponent(new Damageable(Masks.DAMAGE_FROM_PLAYER | Masks.DAMAGE_FROM_NATURE));

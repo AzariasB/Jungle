@@ -6,7 +6,10 @@
  */
 package map;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.jsfml.system.Vector2f;
 
 public class MapObject {
@@ -28,6 +31,7 @@ public class MapObject {
         mWidth = width;
         mHeight = height;
         mPosition = position;
+        mPath = new ArrayList<>();
         mProprieties = new HashMap<>();
     }
 
@@ -50,9 +54,34 @@ public class MapObject {
         mWidth = width;
         mHeight = height;
         mPosition = position;
+        mPath = new ArrayList<>();
         mProprieties = proprieties;
     }
 
+    /**
+     *
+     * @param mWidth width of the object
+     * @param mHeight height of the object
+     * @param mType type of the object (may not exist)
+     * @param mName name of the object
+     * @param mRotation rotation (may not exist)
+     * @param mId id of the oject
+     * @param mPosition postion in the map of the object
+     * @param mPoints if the object is a path, or a polygon, it has got multiple
+     * points
+     * @param mProprieties the personnal propreties of the object
+     */
+    public MapObject(int mWidth, int mHeight, String mType, String mName, int mRotation, int mId, Vector2f mPosition, List<Vector2f> mPoints, Map<String, Object> mProprieties) {
+        this.mId = mId;
+        this.mType = mType;
+        this.mName = mName;
+        this.mWidth = mWidth;
+        this.mPath = mPoints;
+        this.mHeight = mHeight;
+        this.mPosition = mPosition;
+        this.mRotation = mRotation;
+        this.mProprieties = mProprieties;
+    }
 
     /*
      Setters
@@ -67,6 +96,14 @@ public class MapObject {
 
     public void setProprieties(java.util.Map<String, Object> proprieties) {
         this.mProprieties = proprieties;
+    }
+
+    public void setPath(List<Vector2f> path) {
+        this.mPath = new ArrayList<>();
+        for(Vector2f oneP : path){
+            Vector2f exactPosition = new Vector2f(oneP.x + mPosition.x ,oneP.y + mPosition.y);
+            mPath.add(exactPosition);
+        }
     }
 
     public void setWidth(int width) {
@@ -100,6 +137,10 @@ public class MapObject {
         return mProprieties;
     }
 
+    public List<Vector2f> getPath() {
+        return mPath;
+    }
+
     public int getWidth() {
         return mWidth;
     }
@@ -130,5 +171,12 @@ public class MapObject {
     private int mRotation;
     private final int mId;
     private Vector2f mPosition;
+    private OBJECT_TYPE mShape;
+    private List<Vector2f> mPath;
     private java.util.Map<String, Object> mProprieties;
+
+    public enum OBJECT_TYPE {
+
+        SQUARE, CIRCLE, POLYGON, PATH
+    }
 }
